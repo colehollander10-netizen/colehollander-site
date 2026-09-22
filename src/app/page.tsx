@@ -62,16 +62,6 @@ export default async function Home() {
           and build practical tools that help the Order Desk team work faster.
         </p>
         <p>
-          Outside work, I built a{" "}
-          <a
-            href="https://github.com/colehollander10-netizen/canvas-student-mcp-server"
-            className={textLink}
-          >
-            Canvas tool
-          </a>{" "}
-          that lets students check their courses, assignments, and grades through an AI assistant.
-        </p>
-        <p>
           You can find me on{" "}
           <Profiles
             github={github}
