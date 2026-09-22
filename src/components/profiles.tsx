@@ -40,7 +40,9 @@ function Profile({
     <a
       href={href}
       aria-label={iconOnly ? label : undefined}
-      className={`${className} whitespace-nowrap`}
+      // Icon-only links are 20×18; pad the hit area to 24×42 for thumbs
+      // without touching the neighbors across the comma.
+      className={`${className} whitespace-nowrap ${iconOnly ? "relative after:absolute after:-inset-x-0.5 after:-inset-y-3" : ""}`}
     >
       <span
         className={`${iconOnly ? "mx-0.5 size-4 [&>svg]:size-4" : "mr-1 size-3.5 [&>svg]:size-3.5"} inline-flex -translate-y-px align-middle transition-[transform,opacity] duration-500 ease-out group-hover/od:rotate-[360deg] motion-reduce:transition-none`}

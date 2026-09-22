@@ -108,8 +108,8 @@
     },
     {
       "date": "2026-09-22",
-      "codex": 77641253,
-      "claude": 127614770
+      "codex": 85156082,
+      "claude": 175781427
     }
   ],
   "models": [
@@ -136,12 +136,12 @@
     {
       "model": "claude-opus-5-5",
       "tool": "claude",
-      "tokens": 113233166
+      "tokens": 161399823
     },
     {
       "model": "gpt-6-sol",
       "tool": "codex",
-      "tokens": 20503103
+      "tokens": 28017932
     },
     {
       "model": "claude-opus-5",

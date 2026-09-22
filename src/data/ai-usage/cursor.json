@@ -1,0 +1,218 @@
+{
+  "generatedAt": "2026-09-22",
+  "exportMtime": 1790119403132.7585,
+  "days": [
+    {
+      "date": "2026-09-07",
+      "codex": 0,
+      "claude": 0,
+      "cursor": 4723217
+    },
+    {
+      "date": "2026-09-10",
+      "codex": 0,
+      "claude": 0,
+      "cursor": 209751
+    },
+    {
+      "date": "2026-09-11",
+      "codex": 0,
+      "claude": 0,
+      "cursor": 4708056
+    },
+    {
+      "date": "2026-09-15",
+      "codex": 0,
+      "claude": 0,
+      "cursor": 19412360
+    },
+    {
+      "date": "2026-09-16",
+      "codex": 0,
+      "claude": 0,
+      "cursor": 27092766
+    },
+    {
+      "date": "2026-09-17",
+      "codex": 0,
+      "claude": 0,
+      "cursor": 50595435
+    },
+    {
+      "date": "2026-09-18",
+      "codex": 0,
+      "claude": 0,
+      "cursor": 5169451
+    },
+    {
+      "date": "2026-09-22",
+      "codex": 0,
+      "claude": 0,
+      "cursor": 7096850
+    }
+  ],
+  "models": [
+    {
+      "model": "composer-2.5-fast",
+      "tool": "cursor",
+      "tokens": 63332439
+    },
+    {
+      "model": "cursor-grok-4.6-high-fast",
+      "tool": "cursor",
+      "tokens": 23896492
+    },
+    {
+      "model": "muse-spark-1.3-high",
+      "tool": "cursor",
+      "tokens": 23756304
+    },
+    {
+      "model": "gemini-3.8-flash-medium",
+      "tool": "cursor",
+      "tokens": 4657500
+    },
+    {
+      "model": "muse-spark-1.3-max",
+      "tool": "cursor",
+      "tokens": 1020774
+    },
+    {
+      "model": "grok-bot-default",
+      "tool": "cursor",
+      "tokens": 967196
+    },
+    {
+      "model": "cursor-grok-4.6-medium-fast",
+      "tool": "cursor",
+      "tokens": 659710
+    },
+    {
+      "model": "cursor-grok-4.6-xhigh-fast",
+      "tool": "cursor",
+      "tokens": 316520
+    },
+    {
+      "model": "claude-sonnet-5-high",
+      "tool": "cursor",
+      "tokens": 199514
+    },
+    {
+      "model": "claude-fable-5-1-thinking-high",
+      "tool": "cursor",
+      "tokens": 90720
+    },
+    {
+      "model": "muse-spark-1.3-medium",
+      "tool": "cursor",
+      "tokens": 59138
+    },
+    {
+      "model": "cursor-grok-4.6-low-fast",
+      "tool": "cursor",
+      "tokens": 51579
+    }
+  ],
+  "rows": [
+    {
+      "date": "2026-09-07",
+      "model": "cursor-grok-4.6-high-fast",
+      "tokens": 3665301
+    },
+    {
+      "date": "2026-09-07",
+      "model": "grok-bot-default",
+      "tokens": 967196
+    },
+    {
+      "date": "2026-09-07",
+      "model": "claude-fable-5-1-thinking-high",
+      "tokens": 90720
+    },
+    {
+      "date": "2026-09-10",
+      "model": "cursor-grok-4.6-high-fast",
+      "tokens": 158172
+    },
+    {
+      "date": "2026-09-10",
+      "model": "cursor-grok-4.6-low-fast",
+      "tokens": 51579
+    },
+    {
+      "date": "2026-09-11",
+      "model": "cursor-grok-4.6-high-fast",
+      "tokens": 2452400
+    },
+    {
+      "date": "2026-09-11",
+      "model": "muse-spark-1.3-max",
+      "tokens": 1020774
+    },
+    {
+      "date": "2026-09-11",
+      "model": "cursor-grok-4.6-medium-fast",
+      "tokens": 659710
+    },
+    {
+      "date": "2026-09-11",
+      "model": "cursor-grok-4.6-xhigh-fast",
+      "tokens": 316520
+    },
+    {
+      "date": "2026-09-11",
+      "model": "claude-sonnet-5-high",
+      "tokens": 199514
+    },
+    {
+      "date": "2026-09-11",
+      "model": "muse-spark-1.3-medium",
+      "tokens": 59138
+    },
+    {
+      "date": "2026-09-15",
+      "model": "cursor-grok-4.6-high-fast",
+      "tokens": 17620619
+    },
+    {
+      "date": "2026-09-15",
+      "model": "muse-spark-1.3-high",
+      "tokens": 1791741
+    },
+    {
+      "date": "2026-09-16",
+      "model": "composer-2.5-fast",
+      "tokens": 23195856
+    },
+    {
+      "date": "2026-09-16",
+      "model": "muse-spark-1.3-high",
+      "tokens": 3896910
+    },
+    {
+      "date": "2026-09-17",
+      "model": "composer-2.5-fast",
+      "tokens": 40136583
+    },
+    {
+      "date": "2026-09-17",
+      "model": "muse-spark-1.3-high",
+      "tokens": 10458852
+    },
+    {
+      "date": "2026-09-18",
+      "model": "gemini-3.8-flash-medium",
+      "tokens": 4657500
+    },
+    {
+      "date": "2026-09-18",
+      "model": "muse-spark-1.3-high",
+      "tokens": 511951
+    },
+    {
+      "date": "2026-09-22",
+      "model": "muse-spark-1.3-high",
+      "tokens": 7096850
+    }
+  ]
+}

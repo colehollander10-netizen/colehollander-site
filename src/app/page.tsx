@@ -1,13 +1,12 @@
-import { KineticName } from "@/components/kinetic-name";
-import { OrderDeskLink } from "@/components/order-flow";
+import { OrderDeskLink } from "@/components/order-desk-link";
 import { Portrait } from "@/components/portrait";
 import { Profiles } from "@/components/profiles";
 import { ShipEgg } from "@/components/ship-egg";
 import { Toaster } from "@/components/ui/sonner";
-import { toLevels } from "@/components/heatmap";
-import { AiUsage, type ModelRow } from "@/components/ai-usage";
-import usage from "@/data/ai-usage.json";
+import { AiUsage } from "@/components/ai-usage";
 import { getContributions, getGitHubProfile } from "@/lib/github";
+import { usageWindow } from "@/lib/usage";
+import { loadUsage } from "@/lib/usage-data";
 
 const reveal =
   "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-1000 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:fill-mode-both";
@@ -20,22 +19,25 @@ export default async function Home() {
     getGitHubProfile(),
     getContributions(),
   ]);
-  const usageDays = toLevels(
-    usage.days.map((d) => ({ date: d.date, value: d.codex + d.claude })),
-  );
-  const usageTotals = {
-    codex: usage.days.reduce((n, d) => n + d.codex, 0),
-    claude: usage.days.reduce((n, d) => n + d.claude, 0),
-  };
+  const usage = loadUsage();
+  const usageDays = usageWindow(usage.days);
+  // The page is prerendered, so this is the date of the last deploy.
+  const updated = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+    timeZone: "America/Boise",
+  });
 
   return (
-    <main className="mx-auto w-full max-w-[34rem] px-6 pt-20 pb-24 text-sm leading-relaxed sm:pt-32">
+    <main className="mx-auto w-full max-w-[34rem] px-6 pt-20 pb-24 text-[15px] leading-relaxed sm:text-sm sm:pt-32">
       <header className={reveal}>
         <div className="mb-8">
           <Portrait />
         </div>
-        <KineticName />
-        <p className="mt-4 text-muted-foreground">Updated September 2026</p>
+        <h1 className="-ml-[0.04em] text-[clamp(2.5rem,11vw,3.75rem)] leading-[0.95] font-light tracking-[-0.045em]">
+          Cole Hollander
+        </h1>
+        <p className="mt-4 text-muted-foreground">Updated {updated}</p>
       </header>
 
       <section
@@ -43,7 +45,7 @@ export default async function Home() {
         aria-label="About"
       >
         <p>
-          I’m an AI operations specialist at{" "}
+          I’m an AI Operations Specialist at{" "}
           <OrderDeskLink className={textLink} />, where we help
           merchants automate order management across hundreds of ecommerce
           services.
@@ -52,9 +54,7 @@ export default async function Home() {
           I test{" "}
           <AiUsage
             days={usageDays}
-            totals={usageTotals}
-            models={usage.models as ModelRow[]}
-            since={usage.days[0]?.date ?? usage.generatedAt}
+            models={usage.models}
             className={textLink}
           >
             new AI models
@@ -70,8 +70,6 @@ export default async function Home() {
           />
         </p>
       </section>
-
-
 
       <ShipEgg />
       <Toaster position="bottom-center" />

@@ -82,6 +82,8 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --heat-0: oklch(0.915 0.018 80);
+  --claude: #c15f3c;
+  --cursor: #4a78c2;
   --grain-opacity: 0.055;
 }
 
@@ -119,7 +121,16 @@
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
     --heat-0: oklch(0.27 0.005 60);
+    --claude: #cf6d4d;
+    --cursor: #6f87e6;
     --grain-opacity: 0.05;
+  }
+}
+
+/* Otto's hello, from the Order Desk link. */
+@keyframes otto-wave {
+  50% {
+    rotate: -24deg;
   }
 }
 

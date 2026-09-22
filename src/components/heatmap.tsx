@@ -47,13 +47,3 @@ export function Heatmap({
   );
 }
 
-// Buckets raw daily counts into five levels using quartiles of active days.
-export function toLevels(days: { date: string; value: number }[]): HeatDay[] {
-  const active = days.map((d) => d.value).filter((v) => v > 0).sort((a, b) => a - b);
-  const q = (p: number) => active[Math.floor((active.length - 1) * p)] ?? 0;
-  const cuts = [q(0.25), q(0.5), q(0.75)];
-  return days.map(({ date, value }) => ({
-    date,
-    level: value <= 0 ? 0 : 1 + cuts.filter((c) => value > c).length,
-  }));
-}

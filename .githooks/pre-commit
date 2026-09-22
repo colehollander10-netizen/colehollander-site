@@ -1,0 +1,8 @@
+#!/bin/sh
+# Refresh this machine's AI usage snapshot once a month, on the first commit
+# of the month. A failed refresh never blocks the commit; the old one stays.
+if node scripts/ai-usage.mjs --if-stale; then
+  git add src/data/ai-usage
+else
+  echo "ai-usage: refresh failed; committing the previous snapshot" >&2
+fi

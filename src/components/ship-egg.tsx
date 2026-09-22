@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Package } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { toast } from "sonner";
 
-export const SHIP_EVENT = "cole:ship";
-export const SHIPPED_EVENT = "cole:shipped";
+import { Otto } from "@/components/otto";
+
 const WORD = "ship";
 
 export function ShipEgg() {
@@ -26,7 +25,6 @@ export function ShipEgg() {
       toast(`Order #CH-${order} shipped`, {
         description: "Routed through Order Desk. Thanks for stopping by.",
       });
-      window.dispatchEvent(new CustomEvent(SHIPPED_EVENT, { detail: order }));
     };
     const key = (e: KeyboardEvent) => {
       if (
@@ -34,7 +32,7 @@ export function ShipEgg() {
         e.target.closest("input, textarea, [contenteditable]")
       )
         return;
-      if (e.key.length !== 1) return;
+      if (e.key.length !== 1 || e.metaKey || e.ctrlKey || e.altKey) return;
       typed = (typed + e.key.toLowerCase()).slice(-WORD.length);
       if (typed === WORD) {
         typed = "";
@@ -42,33 +40,37 @@ export function ShipEgg() {
       }
     };
     window.addEventListener("keydown", key);
-    window.addEventListener(SHIP_EVENT, ship);
     return () => {
       window.removeEventListener("keydown", key);
-      window.removeEventListener(SHIP_EVENT, ship);
     };
   }, []);
 
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-x-0 bottom-28 z-40 h-8 overflow-hidden"
+      className="pointer-events-none fixed inset-x-0 bottom-28 z-40 h-12 overflow-hidden"
     >
       <AnimatePresence>
         {run && !reduce && (
           <motion.div
             key={run.id}
-            className="absolute left-0 flex items-center gap-2 text-[#3aa8dc]"
+            className="absolute bottom-0 left-0"
             initial={{ x: -48 }}
             animate={{ x: run.width + 48 }}
             transition={{ duration: 2.2, ease: [0.65, 0, 0.35, 1] }}
             onAnimationComplete={() => setRun(null)}
           >
+            {/* Otto delivers the order, waving on his way past. */}
             <motion.span
+              className="block"
               animate={{ y: [0, -6, 0, -3, 0] }}
               transition={{ duration: 0.55, repeat: 3 }}
             >
-              <Package className="size-6" strokeWidth={1.5} />
+              <Otto
+                carrying
+                height={36}
+                armClassName="animate-[otto-wave_480ms_ease-in-out_infinite]"
+              />
             </motion.span>
           </motion.div>
         )}

@@ -1,129 +1,127 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Heatmap, type HeatDay } from "@/components/heatmap";
+import { SERIES, UsageChart, compact } from "@/components/usage-chart";
+import type { UsageDay } from "@/lib/usage";
 
-export type ModelRow = { model: string; tool: "codex" | "claude"; tokens: number };
+export type ModelRow = {
+  model: string;
+  tool: "codex" | "claude" | "cursor";
+  tokens: number;
+};
 
-const INK_SCALE: [string, string, string, string, string] = [
-  "var(--heat-0)",
-  "color-mix(in oklch, var(--foreground) 22%, transparent)",
-  "color-mix(in oklch, var(--foreground) 45%, transparent)",
-  "color-mix(in oklch, var(--foreground) 70%, transparent)",
-  "var(--foreground)",
-];
+const COLOR = Object.fromEntries(SERIES.map((s) => [s.key, s.color]));
 
-const TOOL = {
-  codex: { name: "Codex", color: "var(--foreground)" },
-  claude: { name: "Claude Code", color: "#d97757" },
-} as const;
-
-const compact = new Intl.NumberFormat("en", {
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
-
-// "claude-haiku-4-5-20251001" -> "Haiku 4.5", "gpt-5.6-sol" -> "GPT-5.6 Sol".
+// "claude-haiku-4-5-20251001" -> "Haiku 4.5", "gpt-5.6-sol" -> "GPT-5.6 Sol",
+// "cursor-grok-4.6-high-fast" -> "Grok 4.6 High Fast".
 export function modelName(id: string) {
-  const parts = id.replace(/-\d{8}$/, "").split("-");
-  if (parts[0] === "claude") {
-    const [family, ...version] = parts.slice(1);
-    return `${family[0].toUpperCase()}${family.slice(1)} ${version.join(".")}`.trim();
+  const words = id
+    .replace(/-\d{8}$/, "")
+    .replace(/^(claude|cursor)-/, "")
+    .split("-")
+    .filter(Boolean);
+  const out: string[] = [];
+  for (const w of words) {
+    const prev = out[out.length - 1];
+    // Version numbers split on dashes ("opus-5-5") join back with a dot.
+    if (/^\d+$/.test(w) && prev && /^\d+(\.\d+)*$/.test(prev)) {
+      out[out.length - 1] = `${prev}.${w}`;
+    } else {
+      out.push(/^\d/.test(w) ? w : w[0].toUpperCase() + w.slice(1));
+    }
   }
-  if (parts[0] === "gpt") {
-    const [version, ...rest] = parts.slice(1);
-    const tier = rest.map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
-    return `GPT-${version}${tier ? ` ${tier}` : ""}`;
-  }
-  return id.replace(/-/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+  return out[0] === "Gpt" ? `GPT-${out.slice(1).join(" ")}` : out.join(" ");
 }
 
 export function AiUsage({
   days,
-  totals,
   models,
-  since,
   className,
   children,
 }: {
-  days: HeatDay[];
-  totals: { codex: number; claude: number };
+  days: UsageDay[];
   models: ModelRow[];
-  since: string;
   className: string;
   children: ReactNode;
 }) {
-  const sinceLabel = new Date(`${since}T00:00:00Z`).toLocaleDateString("en", {
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
   const top = models.slice(0, 5);
   const max = top[0]?.tokens ?? 1;
+  const [open, setOpen] = useState(false);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const pointer = useRef("");
+
+  // Hover cards ignore touch, and this trigger has no link to fall back on,
+  // so a tap toggles the card. Mouse and keyboard keep the hover behavior.
+  const tap = () => {
+    if (pointer.current === "touch") setOpen((o) => !o);
+    pointer.current = "";
+  };
 
   return (
-    <HoverCard openDelay={150} closeDelay={100}>
+    <HoverCard
+      open={open}
+      onOpenChange={setOpen}
+      openDelay={150}
+      closeDelay={100}
+    >
       <HoverCardTrigger asChild>
-        <span tabIndex={0} className={`${className} cursor-help`}>
+        <button
+          ref={trigger}
+          type="button"
+          aria-expanded={open}
+          onPointerDown={(e) => (pointer.current = e.pointerType)}
+          onClick={tap}
+          className={`${className} cursor-help`}
+        >
           {children}
-        </span>
+        </button>
       </HoverCardTrigger>
-      <HoverCardContent side="top" sideOffset={8} className="w-72 p-4">
-        <div className="mb-3 flex items-baseline justify-between">
-          <p className="font-medium">Tokens, lately</p>
-          <p className="text-xs text-muted-foreground">since {sinceLabel}</p>
-        </div>
-        <Heatmap
-          days={days}
-          weeks={12}
-          colors={INK_SCALE}
-          label={`Daily Codex and Claude Code tokens since ${sinceLabel}`}
-        />
-        <div className="mt-3 flex gap-4 text-xs text-muted-foreground">
-          {(["codex", "claude"] as const).map((tool) => (
-            <span key={tool} className="flex items-center gap-1.5">
-              <span
-                className="size-2 rounded-full"
-                style={{ background: TOOL[tool].color }}
-              />
-              {TOOL[tool].name} {compact.format(totals[tool])}
-            </span>
-          ))}
-        </div>
+      <HoverCardContent
+        side="top"
+        sideOffset={8}
+        className="w-72 p-4"
+        // A tap on the trigger toggles; don't also count it as a tap outside.
+        onPointerDownOutside={(e) => {
+          if (trigger.current?.contains(e.target as Node)) e.preventDefault();
+        }}
+      >
+        <UsageChart days={days} />
 
-        <div className="mt-4 border-t border-border pt-3">
-          <p className="mb-2 text-xs text-muted-foreground">Top models</p>
-          <ol className="space-y-1.5">
-            {top.map((row, i) => (
-              <li key={`${row.tool}:${row.model}`} className="text-xs">
-                <div className="flex items-baseline gap-2">
-                  <span className="w-3 text-muted-foreground tabular-nums">
-                    {i + 1}
-                  </span>
-                  <span className="font-medium">{modelName(row.model)}</span>
-                  <span className="ml-auto text-muted-foreground tabular-nums">
-                    {compact.format(row.tokens)}
-                  </span>
-                </div>
-                <div className="mt-1 ml-5 h-1 rounded-full bg-[var(--heat-0)]">
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width: `${Math.max(2, (row.tokens / max) * 100)}%`,
-                      background: TOOL[row.tool].color,
-                    }}
-                  />
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
+        {top.length > 0 && (
+          <div className="mt-4 border-t border-border pt-3">
+            <p className="mb-2 text-xs text-muted-foreground">Top models</p>
+            <ol className="space-y-1.5">
+              {top.map((row, i) => (
+                <li key={`${row.tool}:${row.model}`} className="text-xs">
+                  <div className="flex items-baseline gap-2">
+                    <span className="w-3 text-muted-foreground tabular-nums">
+                      {i + 1}
+                    </span>
+                    <span className="font-medium">{modelName(row.model)}</span>
+                    <span className="ml-auto text-muted-foreground tabular-nums">
+                      {compact.format(row.tokens)}
+                    </span>
+                  </div>
+                  <div className="mt-1 ml-5 h-1 rounded-full bg-[var(--heat-0)]">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${Math.max(2, (row.tokens / max) * 100)}%`,
+                        background: COLOR[row.tool],
+                      }}
+                    />
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
       </HoverCardContent>
     </HoverCard>
   );

@@ -48,7 +48,7 @@ export function Portrait() {
       onClick={toggle}
       onPointerMove={move}
       onPointerLeave={() => !developed && radius.set(0)}
-      className="relative block cursor-crosshair overflow-hidden rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
+      className="relative block cursor-crosshair overflow-hidden rounded-md transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
       style={{ width: W, height: H }}
     >
       <span
