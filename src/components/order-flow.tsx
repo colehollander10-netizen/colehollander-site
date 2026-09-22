@@ -9,50 +9,55 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
-const STEPS = ["Your store", "Order Desk", "Shipped"];
+// Thermal printers feed paper in small jerks, so the reveal moves in steps.
+const PRINT_STEPS = 9;
+const printEase = (t: number) => Math.ceil(t * PRINT_STEPS) / PRINT_STEPS;
 
-function Flow() {
+const LINES: [string, string][] = [
+  ["Item", "1 × Cole Hollander"],
+  ["Ships from", "Order Desk"],
+  ["Status", "Ready to ship"],
+];
+
+function Receipt() {
   const reduce = useReducedMotion();
 
   return (
-    <div className="space-y-3">
-      <div className="relative flex items-center justify-between px-1 py-2">
-        <div className="absolute inset-x-3 top-1/2 h-px -translate-y-1/2 bg-border" />
-        {!reduce && (
-          <motion.span
-            className="absolute top-1/2 left-3 size-1.5 -translate-y-1/2 rounded-full bg-[#3aa8dc]"
-            animate={{ left: ["0.75rem", "50%", "50%", "calc(100% - 0.75rem)"] }}
-            transition={{
-              duration: 2.4,
-              times: [0, 0.4, 0.55, 1],
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatDelay: 0.4,
-            }}
-          />
-        )}
-        <span className="relative size-2 rounded-full border border-foreground/30 bg-popover" />
-        <span className="relative rounded-md bg-popover p-1 ring-1 ring-foreground/10">
+    <motion.div
+      initial={reduce ? false : { clipPath: "inset(100% 0 -20% 0)", y: 12 }}
+      animate={{ clipPath: "inset(0% 0 -20% 0)", y: 0 }}
+      transition={{ duration: 0.7, ease: printEase }}
+      className="drop-shadow-[0_6px_16px_rgb(0_0_0/0.14)] dark:drop-shadow-[0_6px_16px_rgb(0_0_0/0.6)]"
+    >
+      <div className="bg-[#f7f6f2] px-4 pt-4 pb-6 font-mono text-[10.5px] leading-5 tracking-wide text-neutral-800 uppercase [mask:conic-gradient(from_-45deg_at_bottom,#0000,#000_1deg_89deg,#0000_90deg)_50%/10px_100%] dark:bg-neutral-800 dark:text-neutral-100">
+        <div className="flex items-center justify-center gap-1.5">
           <Image
             src="/orderdesk-mark.png"
             alt=""
-            width={16}
-            height={16}
-            className="size-4"
+            width={12}
+            height={12}
+            className="size-3"
           />
-        </span>
-        <span className="relative size-2 rounded-full border border-foreground/30 bg-popover" />
+          Order Desk
+        </div>
+        <p className="text-center opacity-55">Order #CH-0922</p>
+        <div className="my-2 border-t border-dashed border-foreground/25" />
+        <dl>
+          {LINES.map(([label, value]) => (
+            <div key={label} className="flex justify-between gap-4">
+              <dt className="opacity-55">{label}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+        <div className="my-2 border-t border-dashed border-foreground/25" />
+        <p className="text-center">Type “ship” to send it</p>
+        <div
+          aria-hidden
+          className="mx-auto mt-3 h-6 w-4/5 bg-[repeating-linear-gradient(90deg,currentColor_0_1px,transparent_1px_3px,currentColor_3px_5px,transparent_5px_6px,currentColor_6px_7px,transparent_7px_10px)] opacity-80"
+        />
       </div>
-      <div className="flex justify-between text-xs text-muted-foreground">
-        {STEPS.map((step) => (
-          <span key={step}>{step}</span>
-        ))}
-      </div>
-      <p className="text-xs leading-relaxed text-muted-foreground">
-        Every order routed, edited, and sent on to fulfillment without anyone
-        copying it by hand.
-      </p>
-    </div>
+    </motion.div>
   );
 }
 
@@ -72,8 +77,12 @@ export function OrderDeskLink({ className }: { className: string }) {
           Order Desk
         </a>
       </HoverCardTrigger>
-      <HoverCardContent side="top" className="w-72 p-4">
-        <Flow />
+      <HoverCardContent
+        side="top"
+        sideOffset={6}
+        className="w-60 bg-transparent p-0 shadow-none ring-0"
+      >
+        <Receipt />
       </HoverCardContent>
     </HoverCard>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef, type PointerEvent } from "react";
 import {
   motion,
   useMotionValue,
@@ -59,26 +59,6 @@ export function KineticName() {
   const pointerY = useMotionValue(-9999);
   const pressTimer = useRef<number | undefined>(undefined);
 
-  useEffect(() => {
-    if (reduce) return;
-    const move = (e: PointerEvent) => {
-      pointerX.set(e.clientX);
-      pointerY.set(e.clientY);
-    };
-    const leave = () => {
-      pointerX.set(-9999);
-      pointerY.set(-9999);
-    };
-    window.addEventListener("pointermove", move, { passive: true });
-    window.addEventListener("pointerup", leave);
-    document.documentElement.addEventListener("pointerleave", leave);
-    return () => {
-      window.removeEventListener("pointermove", move);
-      window.removeEventListener("pointerup", leave);
-      document.documentElement.removeEventListener("pointerleave", leave);
-    };
-  }, [reduce, pointerX, pointerY]);
-
   // Long-press the name on touch screens to find the easter egg.
   const startPress = () => {
     pressTimer.current = window.setTimeout(
@@ -88,12 +68,27 @@ export function KineticName() {
   };
   const cancelPress = () => window.clearTimeout(pressTimer.current);
 
+  // Track the pointer only while it is over the name, so hover cards and
+  // the rest of the page never move the letters.
+  const track = (e: PointerEvent) => {
+    if (reduce) return;
+    pointerX.set(e.clientX);
+    pointerY.set(e.clientY);
+  };
+  const release = () => {
+    cancelPress();
+    pointerX.set(-9999);
+    pointerY.set(-9999);
+  };
+
   return (
     <h1
       className="-ml-[0.04em] cursor-default select-none text-[clamp(2.5rem,11vw,3.75rem)] leading-[0.95] font-light tracking-[-0.045em] [touch-action:pan-y]"
       onPointerDown={startPress}
-      onPointerUp={cancelPress}
-      onPointerLeave={cancelPress}
+      onPointerMove={track}
+      onPointerUp={release}
+      onPointerLeave={release}
+      onPointerCancel={release}
       onContextMenu={(e) => e.preventDefault()}
     >
       <span className="sr-only">{NAME}</span>

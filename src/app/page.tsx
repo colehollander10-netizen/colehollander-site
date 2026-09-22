@@ -1,7 +1,8 @@
 import { Elsewhere } from "@/components/elsewhere";
 import { KineticName } from "@/components/kinetic-name";
 import { OrderDeskLink } from "@/components/order-flow";
-import { ShipEgg } from "@/components/ship-egg";
+import { Portrait } from "@/components/portrait";
+import { ShipEgg, ShipHint } from "@/components/ship-egg";
 import { Toaster } from "@/components/ui/sonner";
 
 const reveal =
@@ -14,6 +15,9 @@ export default function Home() {
   return (
     <main className="mx-auto w-full max-w-[34rem] px-6 pt-20 pb-24 text-sm leading-relaxed sm:pt-32">
       <header className={reveal}>
+        <div className="mb-8">
+          <Portrait />
+        </div>
         <KineticName />
         <p className="mt-4 text-muted-foreground">Updated September 2026</p>
       </header>
@@ -28,8 +32,8 @@ export default function Home() {
           services.
         </p>
         <p>
-          Lately I build internal AI tools that help our support team answer
-          customers faster.
+          I test the latest AI models as they come out and build the ones worth
+          keeping into how Order Desk works.
         </p>
       </section>
 
@@ -42,6 +46,10 @@ export default function Home() {
         </h2>
         <Elsewhere />
       </nav>
+
+      <footer className={`${reveal} mt-24 motion-safe:delay-500`}>
+        <ShipHint />
+      </footer>
 
       <ShipEgg />
       <Toaster position="bottom-center" />

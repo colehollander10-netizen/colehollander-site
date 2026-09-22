@@ -3,13 +3,20 @@
 import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { motion } from "motion/react";
+import { FaLinkedin, FaXTwitter } from "react-icons/fa6";
 
 import { Separator } from "@/components/ui/separator";
 
 const links = [
-  { label: "X", detail: "@colehollander", href: "https://x.com/colehollander" },
+  {
+    label: "X",
+    Icon: FaXTwitter,
+    detail: "@colehollander10",
+    href: "https://x.com/colehollander10",
+  },
   {
     label: "LinkedIn",
+    Icon: FaLinkedin,
     detail: "in/cole-hollander-gt5",
     href: "https://www.linkedin.com/in/cole-hollander-gt5",
   },
@@ -37,7 +44,10 @@ export function Elsewhere() {
             onBlur={() => setActive(null)}
             className="group -mx-2 flex items-center gap-4 rounded-md px-2 py-2.5 focus-visible:outline-2 focus-visible:outline-foreground"
           >
-            <span>{link.label}</span>
+            <span className="flex items-center gap-2">
+              <link.Icon aria-hidden className="size-3.5" />
+              {link.label}
+            </span>
             <span className="ml-auto truncate text-muted-foreground transition-colors group-hover:text-foreground">
               {link.detail}
             </span>
