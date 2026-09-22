@@ -21,13 +21,6 @@ const GITHUB_GREENS: [string, string, string, string, string] = [
   "#216e39",
 ];
 
-const LANGUAGE_COLORS: Record<string, string> = {
-  Swift: "#F05138",
-  TypeScript: "#3178C6",
-  JavaScript: "#F1E05A",
-  Python: "#3572A5",
-};
-
 function Profile({
   href,
   label,
@@ -40,25 +33,29 @@ function Profile({
   label: string;
   icon: ReactNode;
   className: string;
-  children: ReactNode;
+  children?: ReactNode;
   iconOnly?: boolean;
 }) {
+  const link = (
+    <a
+      href={href}
+      aria-label={iconOnly ? label : undefined}
+      className={`${className} whitespace-nowrap`}
+    >
+      <span
+        className={`${iconOnly ? "mx-0.5 size-4 [&>svg]:size-4" : "mr-1 size-3.5 [&>svg]:size-3.5"} inline-flex -translate-y-px align-middle transition-[transform,opacity] duration-500 ease-out group-hover/od:rotate-[360deg] motion-reduce:transition-none`}
+      >
+        {icon}
+      </span>
+      {!iconOnly && label}
+    </a>
+  );
+
+  if (children == null) return link;
+
   return (
     <HoverCard openDelay={150} closeDelay={100}>
-      <HoverCardTrigger asChild>
-        <a
-          href={href}
-          aria-label={iconOnly ? label : undefined}
-          className={`${className} whitespace-nowrap`}
-        >
-          <span
-            className={`${iconOnly ? "mx-0.5 size-4 [&>svg]:size-4" : "mr-1 size-3.5 [&>svg]:size-3.5"} inline-flex -translate-y-px align-middle transition-[transform,opacity] duration-500 ease-out group-hover/od:rotate-[360deg] motion-reduce:transition-none`}
-          >
-            {icon}
-          </span>
-          {!iconOnly && label}
-        </a>
-      </HoverCardTrigger>
+      <HoverCardTrigger asChild>{link}</HoverCardTrigger>
       <HoverCardContent side="top" sideOffset={8} className="w-72 p-0">
         {children}
       </HoverCardContent>
@@ -179,69 +176,16 @@ export function Profiles({
         icon={<FaGithub aria-hidden />}
         className={linkClassName}
       >
-        <div className="p-4">
-          <Header
-            avatar={github.avatar}
-            name={github.name}
-            handle={`@${github.login}`}
-            icon={<FaGithub aria-hidden />}
-          />
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-            {github.bio}
-          </p>
-          {contributions.days.length > 0 && (
-            <div className="mt-3">
-              <Heatmap
-                days={contributions.days}
-                weeks={20}
-                colors={GITHUB_GREENS}
-                label="GitHub contributions over the last 20 weeks"
-              />
-              {contributions.total !== null && (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {contributions.total.toLocaleString("en")} contributions in
-                  the last year
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-        <ul className="border-t border-border">
-          {github.repos.map((repo) => (
-            <li key={repo.name}>
-              <a
-                href={`${githubUrl}/${repo.name}`}
-                className="block px-4 py-2 text-xs transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
-              >
-                <span className="flex items-center gap-2">
-                  <span className="font-medium">{repo.name}</span>
-                  {repo.language && (
-                    <span className="ml-auto flex items-center gap-1 text-muted-foreground">
-                      <span
-                        className="size-2 rounded-full"
-                        style={{
-                          background:
-                            LANGUAGE_COLORS[repo.language] ?? "currentColor",
-                        }}
-                      />
-                      {repo.language}
-                    </span>
-                  )}
-                </span>
-                {repo.description && (
-                  <span className="mt-0.5 block truncate text-muted-foreground">
-                    {repo.description}
-                  </span>
-                )}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <div className="border-t border-border px-4 pb-4">
-          <Visit href={githubUrl}>
-            {github.publicRepos} public repos on GitHub
-          </Visit>
-        </div>
+        {contributions.days.length > 0 ? (
+          <div className="p-4">
+            <Heatmap
+              days={contributions.days}
+              weeks={20}
+              colors={GITHUB_GREENS}
+              label="GitHub contributions over the last 20 weeks"
+            />
+          </div>
+        ) : null}
       </Profile>
       .
     </>

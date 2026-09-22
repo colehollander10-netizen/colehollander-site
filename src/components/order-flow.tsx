@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
+import { SHIPPED_EVENT } from "@/components/ship-egg";
 
 import {
   HoverCard,
@@ -13,14 +15,13 @@ import {
 const PRINT_STEPS = 9;
 const printEase = (t: number) => Math.ceil(t * PRINT_STEPS) / PRINT_STEPS;
 
-const LINES: [string, string][] = [
-  ["Item", "1 × Cole Hollander"],
-  ["Ships from", "Order Desk"],
-  ["Status", "Ready to ship"],
-];
-
-function Receipt() {
+function Receipt({ shippedOrder }: { shippedOrder: string | null }) {
   const reduce = useReducedMotion();
+  const lines: [string, string][] = [
+    ["Item", "1 × Cole Hollander"],
+    ["Routed via", "Order Desk"],
+    ["Status", shippedOrder ? "Shipped" : "Ready to ship"],
+  ];
 
   return (
     <motion.div
@@ -40,10 +41,12 @@ function Receipt() {
           />
           Order Desk
         </div>
-        <p className="text-center opacity-55">Order #CH-0922</p>
+        <p className="text-center opacity-55">
+          Order #CH-{shippedOrder ?? "0922"}
+        </p>
         <div className="my-2 border-t border-dashed border-foreground/25" />
         <dl>
-          {LINES.map(([label, value]) => (
+          {lines.map(([label, value]) => (
             <div key={label} className="flex justify-between gap-4">
               <dt className="opacity-55">{label}</dt>
               <dd>{value}</dd>
@@ -51,7 +54,9 @@ function Receipt() {
           ))}
         </dl>
         <div className="my-2 border-t border-dashed border-foreground/25" />
-        <p className="text-center">Type “ship” to send it</p>
+        <p className="text-center">
+          {shippedOrder ? "On its way" : "Type “ship” to send it"}
+        </p>
         <div
           aria-hidden
           className="mx-auto mt-3 h-6 w-4/5 bg-[repeating-linear-gradient(90deg,currentColor_0_1px,transparent_1px_3px,currentColor_3px_5px,transparent_5px_6px,currentColor_6px_7px,transparent_7px_10px)] opacity-80"
@@ -62,6 +67,15 @@ function Receipt() {
 }
 
 export function OrderDeskLink({ className }: { className: string }) {
+  const [shippedOrder, setShippedOrder] = useState<string | null>(null);
+
+  useEffect(() => {
+    const onShipped = (event: Event) =>
+      setShippedOrder((event as CustomEvent<string>).detail);
+    window.addEventListener(SHIPPED_EVENT, onShipped);
+    return () => window.removeEventListener(SHIPPED_EVENT, onShipped);
+  }, []);
+
   return (
     <HoverCard openDelay={120} closeDelay={80}>
       <HoverCardTrigger asChild>
@@ -82,7 +96,7 @@ export function OrderDeskLink({ className }: { className: string }) {
         sideOffset={6}
         className="w-60 bg-transparent p-0 shadow-none ring-0"
       >
-        <Receipt />
+        <Receipt shippedOrder={shippedOrder} />
       </HoverCardContent>
     </HoverCard>
   );

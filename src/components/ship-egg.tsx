@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { toast } from "sonner";
 
 export const SHIP_EVENT = "cole:ship";
+export const SHIPPED_EVENT = "cole:shipped";
 const WORD = "ship";
 
 export function ShipEgg() {
@@ -23,8 +24,9 @@ export function ShipEgg() {
       setRun({ id: Date.now(), width: window.innerWidth });
       const order = String(Math.floor(1000 + Math.random() * 9000));
       toast(`Order #CH-${order} shipped`, {
-        description: "Packed by Order Desk. Thanks for stopping by.",
+        description: "Routed through Order Desk. Thanks for stopping by.",
       });
+      window.dispatchEvent(new CustomEvent(SHIPPED_EVENT, { detail: order }));
     };
     const key = (e: KeyboardEvent) => {
       if (
@@ -74,4 +76,3 @@ export function ShipEgg() {
     </div>
   );
 }
-
