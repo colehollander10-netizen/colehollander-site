@@ -43,7 +43,8 @@ export default async function Home() {
         aria-label="About"
       >
         <p>
-          I work at <OrderDeskLink className={textLink} />, where we help
+          I’m an AI operations specialist at{" "}
+          <OrderDeskLink className={textLink} />, where we help
           merchants automate order management across hundreds of ecommerce
           services.
         </p>
