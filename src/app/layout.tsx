@@ -15,10 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://colehollander.com"),
   title: "Cole Hollander",
-  description: "Cole Hollander works at Order Desk.",
+  description: "Cole Hollander is an AI operations specialist at Order Desk who builds practical AI tools.",
   openGraph: {
     title: "Cole Hollander",
-    description: "Cole Hollander works at Order Desk.",
+    description: "Cole Hollander is an AI operations specialist at Order Desk who builds practical AI tools.",
     url: "https://colehollander.com",
   },
 };
