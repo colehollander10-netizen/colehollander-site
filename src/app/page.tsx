@@ -4,7 +4,10 @@ import { Portrait } from "@/components/portrait";
 import { Profiles } from "@/components/profiles";
 import { ShipEgg, ShipHint } from "@/components/ship-egg";
 import { Toaster } from "@/components/ui/sonner";
-import { getGitHubProfile } from "@/lib/github";
+import { toLevels } from "@/components/heatmap";
+import { CodexUsage } from "@/components/codex-usage";
+import codex from "@/data/codex-usage.json";
+import { getContributions, getGitHubProfile } from "@/lib/github";
 
 const reveal =
   "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-1000 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:fill-mode-both";
@@ -13,7 +16,15 @@ const textLink =
   "group/od rounded-sm underline decoration-foreground/25 decoration-1 underline-offset-4 transition-colors hover:decoration-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground";
 
 export default async function Home() {
-  const github = await getGitHubProfile();
+  const [github, contributions] = await Promise.all([
+    getGitHubProfile(),
+    getContributions(),
+  ]);
+  const codexDays = toLevels(
+    codex.days.map((d) => ({ date: d.date, value: d.sessions })),
+  );
+  const codexSessions = codex.days.reduce((n, d) => n + d.sessions, 0);
+  const codexTokens = codex.days.reduce((n, d) => n + d.tokens, 0);
 
   return (
     <main className="mx-auto w-full max-w-[34rem] px-6 pt-20 pb-24 text-sm leading-relaxed sm:pt-32">
@@ -35,12 +46,26 @@ export default async function Home() {
           services.
         </p>
         <p>
-          I test the latest AI models as they come out and build the ones worth
+          I test{" "}
+          <CodexUsage
+            days={codexDays}
+            sessions={codexSessions}
+            tokens={codexTokens}
+            since={codex.days[0]?.date ?? codex.generatedAt}
+            className={textLink}
+          >
+            the latest AI models
+          </CodexUsage>{" "}
+          as they come out and build the ones worth
           keeping into how Order Desk works.
         </p>
         <p>
           You can find me on{" "}
-          <Profiles github={github} linkClassName={textLink} />
+          <Profiles
+            github={github}
+            contributions={contributions}
+            linkClassName={textLink}
+          />
         </p>
       </section>
 

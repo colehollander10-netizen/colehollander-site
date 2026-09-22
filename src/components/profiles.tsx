@@ -10,7 +10,16 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import type { GitHubProfile } from "@/lib/github";
+import { Heatmap } from "@/components/heatmap";
+import type { Contributions, GitHubProfile } from "@/lib/github";
+
+const GITHUB_GREENS: [string, string, string, string, string] = [
+  "var(--heat-0)",
+  "#9be9a8",
+  "#40c463",
+  "#30a14e",
+  "#216e39",
+];
 
 const LANGUAGE_COLORS: Record<string, string> = {
   Swift: "#F05138",
@@ -103,9 +112,11 @@ const LINKEDIN_URL = "https://www.linkedin.com/in/cole-hollander-gt5";
 
 export function Profiles({
   github,
+  contributions,
   linkClassName,
 }: {
   github: GitHubProfile;
+  contributions: Contributions;
   linkClassName: string;
 }) {
   const githubUrl = `https://github.com/${github.login}`;
@@ -178,6 +189,22 @@ export function Profiles({
           <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
             {github.bio}
           </p>
+          {contributions.days.length > 0 && (
+            <div className="mt-3">
+              <Heatmap
+                days={contributions.days}
+                weeks={20}
+                colors={GITHUB_GREENS}
+                label="GitHub contributions over the last 20 weeks"
+              />
+              {contributions.total !== null && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {contributions.total.toLocaleString("en")} contributions in
+                  the last year
+                </p>
+              )}
+            </div>
+          )}
         </div>
         <ul className="border-t border-border">
           {github.repos.map((repo) => (

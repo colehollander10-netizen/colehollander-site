@@ -20,7 +20,7 @@ export type GitHubProfile = {
 const SNAPSHOT: GitHubProfile = {
   login: USER,
   name: "Cole Hollander",
-  bio: "Student software builder focused on AI, automation, and real‑world SaaS.",
+  bio: "Testing the latest AI models at Order Desk.",
   avatar: "https://avatars.githubusercontent.com/u/241008441?v=4",
   location: "Boise, ID",
   publicRepos: 4,
@@ -45,8 +45,8 @@ const firstSentence = (text: string | null) =>
 export async function getGitHubProfile(): Promise<GitHubProfile> {
   try {
     const headers = { Accept: "application/vnd.github+json" };
-    // Rebuilds reuse cached fetches; expire them so repo changes show up.
-    const next = { revalidate: 3600 };
+    // Rebuilds reuse cached fetches; expire them fast so profile changes show up.
+    const next = { revalidate: 60 };
     const [user, repos] = await Promise.all([
       fetch(`https://api.github.com/users/${USER}`, { headers, next }),
       fetch(
@@ -80,5 +80,33 @@ export async function getGitHubProfile(): Promise<GitHubProfile> {
     };
   } catch {
     return SNAPSHOT;
+  }
+}
+
+export type ContributionDay = { date: string; level: number };
+export type Contributions = { total: number | null; days: ContributionDay[] };
+
+// The public contributions calendar needs no token; parse it at build time.
+export async function getContributions(): Promise<Contributions> {
+  try {
+    const res = await fetch(`https://github.com/users/${USER}/contributions`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return { total: null, days: [] };
+    const html = await res.text();
+    const days = [...html.matchAll(/<td[^>]*ContributionCalendar-day[^>]*>/g)]
+      .map(([td]) => ({
+        date: td.match(/data-date="([\d-]+)"/)?.[1] ?? "",
+        level: Number(td.match(/data-level="(\d)"/)?.[1] ?? 0),
+      }))
+      .filter((d) => d.date)
+      .sort((a, b) => a.date.localeCompare(b.date));
+    const total = html.match(/([\d,]+)\s+contributions?\s+in the last year/);
+    return {
+      total: total ? Number(total[1].replace(/,/g, "")) : null,
+      days,
+    };
+  } catch {
+    return { total: null, days: [] };
   }
 }
