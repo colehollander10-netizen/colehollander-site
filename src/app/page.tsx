@@ -2,11 +2,11 @@ import { KineticName } from "@/components/kinetic-name";
 import { OrderDeskLink } from "@/components/order-flow";
 import { Portrait } from "@/components/portrait";
 import { Profiles } from "@/components/profiles";
-import { ShipEgg, ShipHint } from "@/components/ship-egg";
+import { ShipEgg } from "@/components/ship-egg";
 import { Toaster } from "@/components/ui/sonner";
 import { toLevels } from "@/components/heatmap";
-import { CodexUsage } from "@/components/codex-usage";
-import codex from "@/data/codex-usage.json";
+import { AiUsage, type ModelRow } from "@/components/ai-usage";
+import usage from "@/data/ai-usage.json";
 import { getContributions, getGitHubProfile } from "@/lib/github";
 
 const reveal =
@@ -20,11 +20,13 @@ export default async function Home() {
     getGitHubProfile(),
     getContributions(),
   ]);
-  const codexDays = toLevels(
-    codex.days.map((d) => ({ date: d.date, value: d.sessions })),
+  const usageDays = toLevels(
+    usage.days.map((d) => ({ date: d.date, value: d.codex + d.claude })),
   );
-  const codexSessions = codex.days.reduce((n, d) => n + d.sessions, 0);
-  const codexTokens = codex.days.reduce((n, d) => n + d.tokens, 0);
+  const usageTotals = {
+    codex: usage.days.reduce((n, d) => n + d.codex, 0),
+    claude: usage.days.reduce((n, d) => n + d.claude, 0),
+  };
 
   return (
     <main className="mx-auto w-full max-w-[34rem] px-6 pt-20 pb-24 text-sm leading-relaxed sm:pt-32">
@@ -47,15 +49,15 @@ export default async function Home() {
         </p>
         <p>
           I test{" "}
-          <CodexUsage
-            days={codexDays}
-            sessions={codexSessions}
-            tokens={codexTokens}
-            since={codex.days[0]?.date ?? codex.generatedAt}
+          <AiUsage
+            days={usageDays}
+            totals={usageTotals}
+            models={usage.models as ModelRow[]}
+            since={usage.days[0]?.date ?? usage.generatedAt}
             className={textLink}
           >
             the latest AI models
-          </CodexUsage>{" "}
+          </AiUsage>{" "}
           as they come out and build the ones worth
           keeping into how Order Desk works.
         </p>
@@ -70,9 +72,6 @@ export default async function Home() {
       </section>
 
 
-      <footer className={`${reveal} mt-20 motion-safe:delay-300`}>
-        <ShipHint />
-      </footer>
 
       <ShipEgg />
       <Toaster position="bottom-center" />

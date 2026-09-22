@@ -1,0 +1,172 @@
+{
+  "generatedAt": "2026-09-22",
+  "days": [
+    {
+      "date": "2026-08-21",
+      "codex": 48018848,
+      "claude": 0
+    },
+    {
+      "date": "2026-08-22",
+      "codex": 855689,
+      "claude": 0
+    },
+    {
+      "date": "2026-08-24",
+      "codex": 12875427,
+      "claude": 0
+    },
+    {
+      "date": "2026-08-25",
+      "codex": 50400092,
+      "claude": 0
+    },
+    {
+      "date": "2026-08-26",
+      "codex": 32488087,
+      "claude": 0
+    },
+    {
+      "date": "2026-08-28",
+      "codex": 69197018,
+      "claude": 65118
+    },
+    {
+      "date": "2026-08-30",
+      "codex": 2409116,
+      "claude": 0
+    },
+    {
+      "date": "2026-08-31",
+      "codex": 21411448,
+      "claude": 65731
+    },
+    {
+      "date": "2026-09-01",
+      "codex": 52850121,
+      "claude": 23345614
+    },
+    {
+      "date": "2026-09-02",
+      "codex": 102331056,
+      "claude": 15742812
+    },
+    {
+      "date": "2026-09-03",
+      "codex": 115243128,
+      "claude": 1279620
+    },
+    {
+      "date": "2026-09-04",
+      "codex": 69059179,
+      "claude": 631212
+    },
+    {
+      "date": "2026-09-07",
+      "codex": 230830255,
+      "claude": 873224
+    },
+    {
+      "date": "2026-09-08",
+      "codex": 74913927,
+      "claude": 21017350
+    },
+    {
+      "date": "2026-09-09",
+      "codex": 10609088,
+      "claude": 65529081
+    },
+    {
+      "date": "2026-09-10",
+      "codex": 31380565,
+      "claude": 5835039
+    },
+    {
+      "date": "2026-09-11",
+      "codex": 86387516,
+      "claude": 22388749
+    },
+    {
+      "date": "2026-09-15",
+      "codex": 43011866,
+      "claude": 43056216
+    },
+    {
+      "date": "2026-09-16",
+      "codex": 43741115,
+      "claude": 57288320
+    },
+    {
+      "date": "2026-09-17",
+      "codex": 153787560,
+      "claude": 43588463
+    },
+    {
+      "date": "2026-09-18",
+      "codex": 56677274,
+      "claude": 13647502
+    },
+    {
+      "date": "2026-09-22",
+      "codex": 77641253,
+      "claude": 127614770
+    }
+  ],
+  "models": [
+    {
+      "model": "gpt-6-astra",
+      "tool": "codex",
+      "tokens": 619596661
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "tool": "codex",
+      "tokens": 561473171
+    },
+    {
+      "model": "claude-fable-5-1",
+      "tool": "claude",
+      "tokens": 298997857
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "tool": "codex",
+      "tokens": 184467313
+    },
+    {
+      "model": "claude-opus-5-5",
+      "tool": "claude",
+      "tokens": 113233166
+    },
+    {
+      "model": "gpt-6-sol",
+      "tool": "codex",
+      "tokens": 20503103
+    },
+    {
+      "model": "claude-opus-5",
+      "tool": "claude",
+      "tokens": 19843151
+    },
+    {
+      "model": "claude-sonnet-5",
+      "tool": "claude",
+      "tokens": 9785704
+    },
+    {
+      "model": "claude-haiku-4-5-20251001",
+      "tool": "claude",
+      "tokens": 108943
+    },
+    {
+      "model": "codex-auto-review",
+      "tool": "codex",
+      "tokens": 51490
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "tool": "codex",
+      "tokens": 27890
+    }
+  ]
+}

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "codex-usage": "node scripts/codex-usage.mjs"
+    "ai-usage": "node scripts/ai-usage.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

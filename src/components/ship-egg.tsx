@@ -75,15 +75,3 @@ export function ShipEgg() {
   );
 }
 
-export function ShipHint() {
-  return (
-    <button
-      type="button"
-      onClick={() => window.dispatchEvent(new Event(SHIP_EVENT))}
-      className="rounded-sm text-xs text-muted-foreground/70 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
-    >
-      <span className="[@media(hover:none)]:hidden">psst: type “ship”</span>
-      <span className="hidden [@media(hover:none)]:inline">psst: tap to ship</span>
-    </button>
-  );
-}
