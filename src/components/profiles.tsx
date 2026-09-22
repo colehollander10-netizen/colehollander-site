@@ -25,21 +25,29 @@ function Profile({
   icon,
   className,
   children,
+  iconOnly = false,
 }: {
   href: string;
   label: string;
   icon: ReactNode;
   className: string;
   children: ReactNode;
+  iconOnly?: boolean;
 }) {
   return (
     <HoverCard openDelay={150} closeDelay={100}>
       <HoverCardTrigger asChild>
-        <a href={href} className={`${className} whitespace-nowrap`}>
-          <span className="mr-1 inline-flex size-3.5 -translate-y-px align-middle transition-transform duration-500 ease-out group-hover/od:rotate-[360deg] motion-reduce:transition-none [&>svg]:size-3.5">
+        <a
+          href={href}
+          aria-label={iconOnly ? label : undefined}
+          className={`${className} whitespace-nowrap`}
+        >
+          <span
+            className={`${iconOnly ? "" : "mr-1 "}inline-flex size-3.5 -translate-y-px align-middle transition-transform duration-500 ease-out group-hover/od:rotate-[360deg] motion-reduce:transition-none [&>svg]:size-3.5`}
+          >
             {icon}
           </span>
-          {label}
+          {!iconOnly && label}
         </a>
       </HoverCardTrigger>
       <HoverCardContent side="top" sideOffset={8} className="w-72 p-0">
@@ -107,6 +115,7 @@ export function Profiles({
       <Profile
         href={X_URL}
         label="X"
+        iconOnly
         icon={<FaXTwitter aria-hidden />}
         className={linkClassName}
       >
