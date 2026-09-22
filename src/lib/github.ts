@@ -16,14 +16,14 @@ export type GitHubProfile = {
   repos: { name: string; description: string; language: string | null }[];
 };
 
-// Snapshot from 2026-09-22, used when the build cannot reach the GitHub API.
+// Snapshot from 2026-09-22 (after the profile cleanup), used when the build cannot reach the GitHub API.
 const SNAPSHOT: GitHubProfile = {
   login: USER,
   name: "Cole Hollander",
   bio: "Student software builder focused on AI, automation, and real‑world SaaS.",
   avatar: "https://avatars.githubusercontent.com/u/241008441?v=4",
   location: "Boise, ID",
-  publicRepos: 9,
+  publicRepos: 4,
   repos: [
     {
       name: "lidfold",
@@ -31,14 +31,9 @@ const SNAPSHOT: GitHubProfile = {
       language: "Swift",
     },
     {
-      name: "Finn",
-      description: "iOS app that tracks your subscriptions and free trials.",
-      language: "Swift",
-    },
-    {
-      name: "seam",
-      description: "Continuity engine for coding agents.",
-      language: null,
+      name: "canvas-student-mcp-server",
+      description: "MCP server for Canvas LMS",
+      language: "JavaScript",
     },
   ],
 };
@@ -50,11 +45,13 @@ const firstSentence = (text: string | null) =>
 export async function getGitHubProfile(): Promise<GitHubProfile> {
   try {
     const headers = { Accept: "application/vnd.github+json" };
+    // Rebuilds reuse cached fetches; expire them so repo changes show up.
+    const next = { revalidate: 3600 };
     const [user, repos] = await Promise.all([
-      fetch(`https://api.github.com/users/${USER}`, { headers }),
+      fetch(`https://api.github.com/users/${USER}`, { headers, next }),
       fetch(
         `https://api.github.com/users/${USER}/repos?per_page=100&type=owner&sort=pushed`,
-        { headers },
+        { headers, next },
       ),
     ]);
     if (!user.ok || !repos.ok) return SNAPSHOT;

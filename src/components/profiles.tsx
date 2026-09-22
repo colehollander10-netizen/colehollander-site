@@ -43,7 +43,7 @@ function Profile({
           className={`${className} whitespace-nowrap`}
         >
           <span
-            className={`${iconOnly ? "" : "mr-1 "}inline-flex size-3.5 -translate-y-px align-middle transition-transform duration-500 ease-out group-hover/od:rotate-[360deg] motion-reduce:transition-none [&>svg]:size-3.5`}
+            className={`${iconOnly ? "mx-0.5 size-4 [&>svg]:size-4" : "mr-1 size-3.5 [&>svg]:size-3.5"} inline-flex -translate-y-px align-middle transition-[transform,opacity] duration-500 ease-out group-hover/od:rotate-[360deg] motion-reduce:transition-none`}
           >
             {icon}
           </span>
@@ -133,6 +133,7 @@ export function Profiles({
       <Profile
         href={LINKEDIN_URL}
         label="LinkedIn"
+        iconOnly
         icon={<FaLinkedin aria-hidden />}
         className={linkClassName}
       >
@@ -163,6 +164,7 @@ export function Profiles({
       <Profile
         href={githubUrl}
         label="GitHub"
+        iconOnly
         icon={<FaGithub aria-hidden />}
         className={linkClassName}
       >
