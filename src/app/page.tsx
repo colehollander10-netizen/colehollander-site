@@ -57,10 +57,19 @@ export default async function Home() {
             since={usage.days[0]?.date ?? usage.generatedAt}
             className={textLink}
           >
-            the latest AI models
+            new AI models
           </AiUsage>{" "}
-          as they come out and build the ones worth
-          keeping into how Order Desk works.
+          and build practical tools that help the Order Desk team work faster.
+        </p>
+        <p>
+          Outside work, I built a{" "}
+          <a
+            href="https://github.com/colehollander10-netizen/canvas-student-mcp-server"
+            className={textLink}
+          >
+            Canvas tool
+          </a>{" "}
+          that lets students check their courses, assignments, and grades through an AI assistant.
         </p>
         <p>
           You can find me on{" "}
