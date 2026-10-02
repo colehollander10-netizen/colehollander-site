@@ -10,7 +10,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Heatmap } from "@/components/heatmap";
+import { GitHubActivity } from "@/components/ui/github-activity";
 import type { Contributions, GitHubProfile } from "@/lib/github";
 
 const GITHUB_GREENS: [string, string, string, string, string] = [
@@ -21,6 +21,10 @@ const GITHUB_GREENS: [string, string, string, string, string] = [
   "#216e39",
 ];
 
+const GITHUB_MONTHS = 5;
+// Matches the component's own month-to-week math, so the total covers what it draws.
+const GITHUB_WEEKS = Math.ceil((GITHUB_MONTHS * 365.25) / 12 / 7);
+
 function Profile({
   href,
   label,
@@ -28,6 +32,7 @@ function Profile({
   className,
   children,
   iconOnly = false,
+  cardClassName = "w-72",
 }: {
   href: string;
   label: string;
@@ -35,6 +40,7 @@ function Profile({
   className: string;
   children?: ReactNode;
   iconOnly?: boolean;
+  cardClassName?: string;
 }) {
   const link = (
     <a
@@ -58,7 +64,12 @@ function Profile({
   return (
     <HoverCard openDelay={150} closeDelay={100}>
       <HoverCardTrigger asChild>{link}</HoverCardTrigger>
-      <HoverCardContent side="top" sideOffset={8} className="w-72 p-0">
+      <HoverCardContent
+        side="top"
+        sideOffset={8}
+        collisionPadding={8}
+        className={`${cardClassName} p-0`}
+      >
         {children}
       </HoverCardContent>
     </HoverCard>
@@ -119,6 +130,10 @@ export function Profiles({
   linkClassName: string;
 }) {
   const githubUrl = `https://github.com/${github.login}`;
+  // The calendar starts on a Sunday, so whole weeks from the end keep columns aligned.
+  const weeks = Math.ceil(contributions.days.length / 7);
+  const recent = contributions.days.slice(Math.max(0, weeks - GITHUB_WEEKS) * 7);
+  const total = recent.reduce((sum, d) => sum + d.count, 0);
 
   return (
     <>
@@ -175,18 +190,21 @@ export function Profiles({
         href={githubUrl}
         label="GitHub"
         iconOnly
+        cardClassName="w-auto"
         icon={<FaGithub aria-hidden />}
         className={linkClassName}
       >
-        {contributions.days.length > 0 ? (
-          <div className="p-4">
-            <Heatmap
-              days={contributions.days}
-              weeks={20}
-              colors={GITHUB_GREENS}
-              label="GitHub contributions over the last 20 weeks"
-            />
-          </div>
+        {recent.length > 0 ? (
+          <GitHubActivity
+            contributions={recent}
+            repos={contributions.repos}
+            months={GITHUB_MONTHS}
+            accent={GITHUB_GREENS}
+            showMonths
+            heading={`${total} contributions in the last ${GITHUB_MONTHS} months`}
+            label="Most pushes lately:"
+            className="rounded-none bg-transparent dark:bg-transparent"
+          />
         ) : null}
       </Profile>
       .
