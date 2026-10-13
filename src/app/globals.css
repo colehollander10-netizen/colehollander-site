@@ -85,6 +85,8 @@
   --claude: #c15f3c;
   --cursor: #4a78c2;
   --grain-opacity: 0.055;
+  --shelf-wood: oklch(0.72 0.06 65);
+  --shelf-edge: oklch(0.6 0.06 60);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -124,7 +126,26 @@
     --claude: #cf6d4d;
     --cursor: #6f87e6;
     --grain-opacity: 0.05;
+    --shelf-wood: oklch(0.36 0.03 60);
+    --shelf-edge: oklch(0.27 0.025 60);
   }
+}
+
+/* The bookshelf: a wooden board under each row of spines. Rows are
+   --spine-h tall (set by the component) and wrap onto the next board. */
+.bookshelf {
+  --row-gap: 2.5rem;
+  row-gap: var(--row-gap);
+  padding-bottom: 0.75rem;
+  background-image: linear-gradient(
+    to bottom,
+    transparent var(--spine-h),
+    var(--shelf-wood) var(--spine-h),
+    var(--shelf-wood) calc(var(--spine-h) + 7px),
+    var(--shelf-edge) calc(var(--spine-h) + 7px),
+    transparent calc(var(--spine-h) + 10px)
+  );
+  background-size: 100% calc(var(--spine-h) + var(--row-gap));
 }
 
 /* Otto's hello, from the Order Desk link. */

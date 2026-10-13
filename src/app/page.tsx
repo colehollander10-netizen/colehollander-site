@@ -4,15 +4,12 @@ import { Profiles } from "@/components/profiles";
 import { ShipEgg } from "@/components/ship-egg";
 import { Toaster } from "@/components/ui/sonner";
 import { AiUsage } from "@/components/ai-usage";
+import Link from "next/link";
+
 import { getContributions, getGitHubProfile } from "@/lib/github";
+import { reveal, textLink } from "@/lib/styles";
 import { usageWindow } from "@/lib/usage";
 import { loadUsage } from "@/lib/usage-data";
-
-const reveal =
-  "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-1000 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:fill-mode-both";
-
-const textLink =
-  "group/od rounded-sm underline decoration-foreground/25 decoration-1 underline-offset-4 transition-colors hover:decoration-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground";
 
 export default async function Home() {
   const [github, contributions] = await Promise.all([
@@ -60,6 +57,13 @@ export default async function Home() {
             new AI models
           </AiUsage>{" "}
           and build practical tools that help the Order Desk team work faster.
+        </p>
+        <p>
+          Here’s{" "}
+          <Link href="/books" className={textLink}>
+            what I’m reading
+          </Link>
+          .
         </p>
         <p>
           You can find me on{" "}
