@@ -1,38 +1,5 @@
 [
   {
-    "title": "Confessions",
-    "authors": [
-      "Saint Augustine"
-    ],
-    "status": "in_progress",
-    "rating": null,
-    "publisher": "Penguin"
-  },
-  {
-    "title": "The Anxious Generation",
-    "authors": [
-      "Jonathan Haidt"
-    ],
-    "status": "in_progress",
-    "rating": null
-  },
-  {
-    "title": "Knowing God",
-    "authors": [
-      "J. I. Packer"
-    ],
-    "status": "in_progress",
-    "rating": null
-  },
-  {
-    "title": "The Simple Path to Wealth",
-    "authors": [
-      "JL Collins"
-    ],
-    "status": "finished",
-    "rating": null
-  },
-  {
     "title": "Celebration of Discipline",
     "authors": [
       "Richard J. Foster"
@@ -199,5 +166,38 @@
     "authors": [],
     "status": "finished",
     "rating": 3
+  },
+  {
+    "title": "Confessions",
+    "authors": [
+      "Saint Augustine"
+    ],
+    "status": "in_progress",
+    "rating": null,
+    "publisher": "Penguin"
+  },
+  {
+    "title": "The Anxious Generation",
+    "authors": [
+      "Jonathan Haidt"
+    ],
+    "status": "in_progress",
+    "rating": null
+  },
+  {
+    "title": "Knowing God",
+    "authors": [
+      "J. I. Packer"
+    ],
+    "status": "in_progress",
+    "rating": null
+  },
+  {
+    "title": "The Simple Path to Wealth",
+    "authors": [
+      "JL Collins"
+    ],
+    "status": "finished",
+    "rating": null
   }
 ]

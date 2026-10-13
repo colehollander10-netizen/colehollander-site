@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import shelf from "@/data/books/shelf.json";
+
 import {
   arrangeShelves,
   datesForNewBook,
@@ -142,6 +144,17 @@ describe("shelves", () => {
     expect(shelves[1].books.slice(0, FINISHED_SHOWN).map((b) => b.id)).toEqual(
       Array.from({ length: 12 }, (_, i) => 20 - i),
     );
+  });
+});
+
+describe("the seeded shelf", () => {
+  const books = shelf as Book[];
+  const titles = (status: Book["status"]) => shelfBooks(books, status).map((b) => b.title);
+
+  it("puts the photographed books, the newest, before the old tracker list", () => {
+    expect(titles("finished")[0]).toBe("The Simple Path to Wealth");
+    expect(titles("finished").slice(1, 4)).toEqual(["12 Ways Your Phone is Changing You", "Prayer", "The Running Man"]);
+    expect(titles("in_progress")).toEqual(["Knowing God", "The Anxious Generation", "Confessions"]);
   });
 });
 

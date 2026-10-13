@@ -1,8 +1,12 @@
-// Resolves the starting reading list (src/data/books/seed.json: the four
-// photographed books plus the old tracker list) against Open Library, then
-// Google Books, with the same confidence rules as the intake. Writes the
-// result to src/data/books/shelf.json and the covers to public/books/covers,
-// so the site builds with no network or database. Prints a report.
+// Resolves the starting reading list (src/data/books/seed.json: the old
+// tracker list, oldest first, then the four photographed books, which are the
+// newest) against Open Library, then Google Books, with the same confidence
+// rules as the intake. Writes the result to src/data/books/shelf.json and the
+// covers to public/books/covers, so the site builds with no network or
+// database. Prints a report.
+//
+// Keep the list oldest first: IDs follow it, and the shelf puts undated books
+// (all of these) most recently added first.
 //
 //   pnpm books:seed
 //

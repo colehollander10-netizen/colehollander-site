@@ -1,90 +1,6 @@
 [
   {
     "id": 1,
-    "status": "in_progress",
-    "rating": null,
-    "startDate": null,
-    "finishDate": null,
-    "createdAt": "2026-10-13T02:26:42.820Z",
-    "updatedAt": "2026-10-13T02:26:42.820Z",
-    "title": "Confessions",
-    "authors": [
-      "Augustine of Hippo"
-    ],
-    "coverUrl": "https://covers.openlibrary.org/b/id/6480533-L.jpg",
-    "coverCachedPath": "/books/covers/openlibrary-OL137872W.jpg",
-    "spineColor": "#16130c",
-    "source": "openlibrary",
-    "sourceId": "OL137872W",
-    "isbn": "9780140441147",
-    "year": 1482,
-    "pages": 351
-  },
-  {
-    "id": 2,
-    "status": "in_progress",
-    "rating": null,
-    "startDate": null,
-    "finishDate": null,
-    "createdAt": "2026-10-13T02:26:42.820Z",
-    "updatedAt": "2026-10-13T02:26:42.820Z",
-    "title": "The Anxious Generation",
-    "authors": [
-      "Jonathan Haidt"
-    ],
-    "coverUrl": "https://covers.openlibrary.org/b/id/14611417-L.jpg",
-    "coverCachedPath": "/books/covers/openlibrary-OL37575384W.jpg",
-    "spineColor": "#9b6021",
-    "source": "openlibrary",
-    "sourceId": "OL37575384W",
-    "isbn": "9780593655030",
-    "year": 2024,
-    "pages": 395
-  },
-  {
-    "id": 3,
-    "status": "in_progress",
-    "rating": null,
-    "startDate": null,
-    "finishDate": null,
-    "createdAt": "2026-10-13T02:26:42.820Z",
-    "updatedAt": "2026-10-13T02:26:42.820Z",
-    "title": "Knowing God",
-    "authors": [
-      "J. I. Packer"
-    ],
-    "coverUrl": "https://covers.openlibrary.org/b/id/15179875-L.jpg",
-    "coverCachedPath": "/books/covers/openlibrary-OL68979W.jpg",
-    "spineColor": "#f6f7e9",
-    "source": "openlibrary",
-    "sourceId": "OL68979W",
-    "isbn": "9780830816507",
-    "year": 1973,
-    "pages": 256
-  },
-  {
-    "id": 4,
-    "status": "finished",
-    "rating": null,
-    "startDate": null,
-    "finishDate": null,
-    "createdAt": "2026-10-13T02:26:42.820Z",
-    "updatedAt": "2026-10-13T02:26:42.820Z",
-    "title": "The Simple Path to Wealth",
-    "authors": [
-      "J. L. Collins"
-    ],
-    "coverUrl": "https://covers.openlibrary.org/b/id/10448941-L.jpg",
-    "coverCachedPath": "/books/covers/openlibrary-OL19747351W.jpg",
-    "spineColor": "#e7f1f0",
-    "source": "openlibrary",
-    "sourceId": "OL19747351W",
-    "isbn": "9781533667922",
-    "year": 2000,
-    "pages": 289
-  },
-  {
-    "id": 5,
     "status": "finished",
     "rating": 5,
     "startDate": null,
@@ -105,7 +21,7 @@
     "pages": 228
   },
   {
-    "id": 6,
+    "id": 2,
     "status": "finished",
     "rating": 5,
     "startDate": null,
@@ -126,7 +42,7 @@
     "pages": 90
   },
   {
-    "id": 7,
+    "id": 3,
     "status": "finished",
     "rating": 4,
     "startDate": null,
@@ -147,7 +63,7 @@
     "pages": 191
   },
   {
-    "id": 8,
+    "id": 4,
     "status": "finished",
     "rating": 3,
     "startDate": null,
@@ -168,7 +84,7 @@
     "pages": 304
   },
   {
-    "id": 9,
+    "id": 5,
     "status": "finished",
     "rating": 3,
     "startDate": null,
@@ -189,7 +105,7 @@
     "pages": 222
   },
   {
-    "id": 10,
+    "id": 6,
     "status": "finished",
     "rating": 3,
     "startDate": null,
@@ -210,7 +126,7 @@
     "pages": null
   },
   {
-    "id": 11,
+    "id": 7,
     "status": "finished",
     "rating": 4,
     "startDate": null,
@@ -231,7 +147,7 @@
     "pages": 240
   },
   {
-    "id": 12,
+    "id": 8,
     "status": "finished",
     "rating": 2,
     "startDate": null,
@@ -252,7 +168,7 @@
     "pages": null
   },
   {
-    "id": 13,
+    "id": 9,
     "status": "finished",
     "rating": 2,
     "startDate": null,
@@ -273,7 +189,7 @@
     "pages": 336
   },
   {
-    "id": 14,
+    "id": 10,
     "status": "finished",
     "rating": 2,
     "startDate": null,
@@ -294,7 +210,7 @@
     "pages": 304
   },
   {
-    "id": 15,
+    "id": 11,
     "status": "finished",
     "rating": 3,
     "startDate": null,
@@ -315,7 +231,7 @@
     "pages": 378
   },
   {
-    "id": 16,
+    "id": 12,
     "status": "finished",
     "rating": 4,
     "startDate": null,
@@ -336,7 +252,7 @@
     "pages": null
   },
   {
-    "id": 17,
+    "id": 13,
     "status": "finished",
     "rating": 2,
     "startDate": null,
@@ -357,7 +273,7 @@
     "pages": 192
   },
   {
-    "id": 18,
+    "id": 14,
     "status": "finished",
     "rating": 2,
     "startDate": null,
@@ -378,7 +294,7 @@
     "pages": 320
   },
   {
-    "id": 19,
+    "id": 15,
     "status": "finished",
     "rating": 3,
     "startDate": null,
@@ -399,7 +315,7 @@
     "pages": 302
   },
   {
-    "id": 20,
+    "id": 16,
     "status": "finished",
     "rating": 3,
     "startDate": null,
@@ -420,7 +336,7 @@
     "pages": 224
   },
   {
-    "id": 21,
+    "id": 17,
     "status": "finished",
     "rating": 2,
     "startDate": null,
@@ -441,7 +357,7 @@
     "pages": 256
   },
   {
-    "id": 22,
+    "id": 18,
     "status": "want_to_read",
     "rating": null,
     "startDate": null,
@@ -462,7 +378,7 @@
     "pages": 128
   },
   {
-    "id": 23,
+    "id": 19,
     "status": "finished",
     "rating": 4,
     "startDate": null,
@@ -483,7 +399,7 @@
     "pages": 336
   },
   {
-    "id": 24,
+    "id": 20,
     "status": "want_to_read",
     "rating": null,
     "startDate": null,
@@ -505,7 +421,7 @@
     "pages": 224
   },
   {
-    "id": 25,
+    "id": 21,
     "status": "finished",
     "rating": 3,
     "startDate": null,
@@ -524,5 +440,89 @@
     "isbn": "9781433552434",
     "year": 2017,
     "pages": 226
+  },
+  {
+    "id": 22,
+    "status": "in_progress",
+    "rating": null,
+    "startDate": null,
+    "finishDate": null,
+    "createdAt": "2026-10-13T02:26:42.820Z",
+    "updatedAt": "2026-10-13T02:26:42.820Z",
+    "title": "Confessions",
+    "authors": [
+      "Augustine of Hippo"
+    ],
+    "coverUrl": "https://covers.openlibrary.org/b/id/6480533-L.jpg",
+    "coverCachedPath": "/books/covers/openlibrary-OL137872W.jpg",
+    "spineColor": "#16130c",
+    "source": "openlibrary",
+    "sourceId": "OL137872W",
+    "isbn": "9780140441147",
+    "year": 1482,
+    "pages": 351
+  },
+  {
+    "id": 23,
+    "status": "in_progress",
+    "rating": null,
+    "startDate": null,
+    "finishDate": null,
+    "createdAt": "2026-10-13T02:26:42.820Z",
+    "updatedAt": "2026-10-13T02:26:42.820Z",
+    "title": "The Anxious Generation",
+    "authors": [
+      "Jonathan Haidt"
+    ],
+    "coverUrl": "https://covers.openlibrary.org/b/id/14611417-L.jpg",
+    "coverCachedPath": "/books/covers/openlibrary-OL37575384W.jpg",
+    "spineColor": "#9b6021",
+    "source": "openlibrary",
+    "sourceId": "OL37575384W",
+    "isbn": "9780593655030",
+    "year": 2024,
+    "pages": 395
+  },
+  {
+    "id": 24,
+    "status": "in_progress",
+    "rating": null,
+    "startDate": null,
+    "finishDate": null,
+    "createdAt": "2026-10-13T02:26:42.820Z",
+    "updatedAt": "2026-10-13T02:26:42.820Z",
+    "title": "Knowing God",
+    "authors": [
+      "J. I. Packer"
+    ],
+    "coverUrl": "https://covers.openlibrary.org/b/id/15179875-L.jpg",
+    "coverCachedPath": "/books/covers/openlibrary-OL68979W.jpg",
+    "spineColor": "#f6f7e9",
+    "source": "openlibrary",
+    "sourceId": "OL68979W",
+    "isbn": "9780830816507",
+    "year": 1973,
+    "pages": 256
+  },
+  {
+    "id": 25,
+    "status": "finished",
+    "rating": null,
+    "startDate": null,
+    "finishDate": null,
+    "createdAt": "2026-10-13T02:26:42.820Z",
+    "updatedAt": "2026-10-13T02:26:42.820Z",
+    "title": "The Simple Path to Wealth",
+    "authors": [
+      "J. L. Collins"
+    ],
+    "coverUrl": "https://covers.openlibrary.org/b/id/10448941-L.jpg",
+    "coverCachedPath": "/books/covers/openlibrary-OL19747351W.jpg",
+    "spineColor": "#e7f1f0",
+    "source": "openlibrary",
+    "sourceId": "OL19747351W",
+    "isbn": "9781533667922",
+    "year": 2000,
+    "pages": 289
   }
 ]
