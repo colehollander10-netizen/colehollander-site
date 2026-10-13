@@ -1,0 +1,203 @@
+[
+  {
+    "title": "Celebration of Discipline",
+    "authors": [
+      "Richard J. Foster"
+    ],
+    "status": "finished",
+    "rating": 5
+  },
+  {
+    "title": "Pursuit of God",
+    "authors": [
+      "A.W. Tozer"
+    ],
+    "status": "finished",
+    "rating": 5
+  },
+  {
+    "title": "Mere Christianity",
+    "authors": [
+      "C.S. Lewis"
+    ],
+    "status": "finished",
+    "rating": 4
+  },
+  {
+    "title": "The Ruthless Elimination of Hurry",
+    "authors": [
+      "John Mark Comer"
+    ],
+    "status": "finished",
+    "rating": 3
+  },
+  {
+    "title": "Outdated",
+    "authors": [
+      "Jonathan \"JP\" Pokluda"
+    ],
+    "status": "finished",
+    "rating": 3
+  },
+  {
+    "title": "Practicing the Way",
+    "authors": [
+      "John Mark Comer"
+    ],
+    "status": "finished",
+    "rating": 3
+  },
+  {
+    "title": "No More Boring Bible Study",
+    "authors": [
+      "Faith Womack"
+    ],
+    "status": "finished",
+    "rating": 4
+  },
+  {
+    "title": "You Gotta Ask",
+    "authors": [
+      "Jon Strain",
+      "Pam Strain"
+    ],
+    "status": "finished",
+    "rating": 2
+  },
+  {
+    "title": "Garden City",
+    "authors": [
+      "John Mark Comer"
+    ],
+    "status": "finished",
+    "rating": 2
+  },
+  {
+    "title": "Loveology",
+    "authors": [
+      "John Mark Comer"
+    ],
+    "status": "finished",
+    "rating": 2
+  },
+  {
+    "title": "Heaven's Wager",
+    "authors": [
+      "Ted Dekker"
+    ],
+    "status": "finished",
+    "rating": 3
+  },
+  {
+    "title": "Bible Translations for Everyone",
+    "authors": [
+      "Tim Wildsmith"
+    ],
+    "status": "finished",
+    "rating": 4
+  },
+  {
+    "title": "Don't Waste Your Life",
+    "authors": [
+      "John Piper"
+    ],
+    "status": "finished",
+    "rating": 2
+  },
+  {
+    "title": "Desiring God",
+    "authors": [
+      "John Piper"
+    ],
+    "status": "finished",
+    "rating": 2
+  },
+  {
+    "title": "Disciplines of a Godly Man",
+    "authors": [
+      "R. Kent Hughes"
+    ],
+    "status": "finished",
+    "rating": 3
+  },
+  {
+    "title": "Welcome to adulting",
+    "authors": [
+      "Jonathan \"JP\" Pokluda"
+    ],
+    "status": "finished",
+    "rating": 3
+  },
+  {
+    "title": "The Running Man",
+    "authors": [
+      "Stephen King"
+    ],
+    "status": "finished",
+    "rating": 2
+  },
+  {
+    "title": "Reflections on the Psalms",
+    "authors": [
+      "C.S. Lewis"
+    ],
+    "status": "want_to_read",
+    "rating": null
+  },
+  {
+    "title": "Prayer",
+    "authors": [
+      "Timothy Keller"
+    ],
+    "status": "finished",
+    "rating": 4
+  },
+  {
+    "title": "Stand Firm and Act Like Men",
+    "authors": [
+      "Joby Martin",
+      "Charles Martin"
+    ],
+    "status": "want_to_read",
+    "rating": null
+  },
+  {
+    "title": "12 Ways your Phone is Changing You",
+    "authors": [],
+    "status": "finished",
+    "rating": 3
+  },
+  {
+    "title": "Confessions",
+    "authors": [
+      "Saint Augustine"
+    ],
+    "status": "in_progress",
+    "rating": null,
+    "publisher": "Penguin"
+  },
+  {
+    "title": "The Anxious Generation",
+    "authors": [
+      "Jonathan Haidt"
+    ],
+    "status": "in_progress",
+    "rating": null
+  },
+  {
+    "title": "Knowing God",
+    "authors": [
+      "J. I. Packer"
+    ],
+    "status": "in_progress",
+    "rating": null
+  },
+  {
+    "title": "The Simple Path to Wealth",
+    "authors": [
+      "JL Collins"
+    ],
+    "status": "finished",
+    "rating": null
+  }
+]

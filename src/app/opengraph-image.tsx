@@ -8,8 +8,6 @@ import { ImageResponse } from "next/og";
 export const alt = "Cole Hollander, AI Operations Specialist at Order Desk";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-// output: "export" needs the route pinned to build time.
-export const dynamic = "force-static";
 
 const PAPER = "#f8f3ea";
 const INK = "#2c2621";

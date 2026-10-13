@@ -4,24 +4,26 @@ import { Profiles } from "@/components/profiles";
 import { ShipEgg } from "@/components/ship-egg";
 import { Toaster } from "@/components/ui/sonner";
 import { AiUsage } from "@/components/ai-usage";
+import { ReadingStrip } from "@/components/reading-strip";
+import { SiteNav } from "@/components/site-nav";
+
+import { readingStrip } from "@/lib/books/records";
+import { loadBooks } from "@/lib/books/store";
 import { getContributions, getGitHubProfile } from "@/lib/github";
+import { reveal, textLink } from "@/lib/styles";
 import { usageWindow } from "@/lib/usage";
 import { loadUsage } from "@/lib/usage-data";
 
-const reveal =
-  "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-1000 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:fill-mode-both";
-
-const textLink =
-  "group/od rounded-sm underline decoration-foreground/25 decoration-1 underline-offset-4 transition-colors hover:decoration-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground";
-
 export default async function Home() {
-  const [github, contributions] = await Promise.all([
+  const [github, contributions, books] = await Promise.all([
     getGitHubProfile(),
     getContributions(),
+    loadBooks(),
   ]);
   const usage = loadUsage();
   const usageDays = usageWindow(usage.days);
-  // The page is prerendered, so this is the date of the last deploy.
+  // The page is prerendered, so this is the date of the last deploy. The
+  // reading strip is from then too; /books itself updates within a minute.
   const updated = new Date().toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
@@ -31,6 +33,9 @@ export default async function Home() {
   return (
     <main className="mx-auto w-full max-w-[34rem] px-6 pt-20 pb-24 text-[15px] leading-relaxed sm:text-sm sm:pt-32">
       <header className={reveal}>
+        <div className="mb-10">
+          <SiteNav current="/" />
+        </div>
         <div className="mb-8">
           <Portrait />
         </div>
@@ -61,6 +66,7 @@ export default async function Home() {
           </AiUsage>{" "}
           and build practical tools that help the Order Desk team work faster.
         </p>
+        <ReadingStrip books={readingStrip(books)} />
         <p>
           You can find me on{" "}
           <Profiles

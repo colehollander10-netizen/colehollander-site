@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# local bookshelf database (BOOKS_DATABASE_URL=file:books.db)
+*.db
+
 # vercel
 .vercel
 
