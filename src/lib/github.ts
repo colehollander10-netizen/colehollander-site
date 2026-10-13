@@ -11,15 +11,13 @@ const SNAPSHOT: GitHubProfile = {
   location: "Boise, ID",
 };
 
-// Runs at build time; the static export bakes the result into the page.
+// Runs at build time; the prerendered homepage bakes the result in. Fetches
+// here are uncached, so each deploy sees current GitHub data and the page
+// never regenerates at request time.
 export async function getGitHubProfile(): Promise<GitHubProfile> {
   try {
-    const headers = { Accept: "application/vnd.github+json" };
-    // Rebuilds reuse cached fetches; expire them fast so profile changes show up.
-    const next = { revalidate: 60 };
     const user = await fetch(`https://api.github.com/users/${USER}`, {
-      headers,
-      next,
+      headers: { Accept: "application/vnd.github+json" },
     });
     if (!user.ok) return SNAPSHOT;
     const u = await user.json();
@@ -42,9 +40,7 @@ export type Contributions = { days: ContributionDay[]; repos: RepoPushes[] };
 
 // The public contributions calendar needs no token; parse it at build time.
 async function getCalendar(): Promise<ContributionDay[]> {
-  const res = await fetch(`https://github.com/users/${USER}/contributions`, {
-    next: { revalidate: 60 },
-  });
+  const res = await fetch(`https://github.com/users/${USER}/contributions`);
   if (!res.ok) return [];
   const html = await res.text();
   // Counts live in sr-only tooltips ("3 contributions on …") keyed to each cell's id.
@@ -67,7 +63,7 @@ async function getCalendar(): Promise<ContributionDay[]> {
 async function getTopRepos(): Promise<RepoPushes[]> {
   const res = await fetch(
     `https://api.github.com/users/${USER}/events/public?per_page=100`,
-    { headers: { Accept: "application/vnd.github+json" }, next: { revalidate: 60 } },
+    { headers: { Accept: "application/vnd.github+json" } },
   );
   if (!res.ok) return [];
   const events: { type: string; repo?: { name: string } }[] = await res.json();
