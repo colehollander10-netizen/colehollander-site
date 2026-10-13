@@ -1,6 +1,17 @@
 import { describe, expect, it } from "vitest";
 
-import { datesForNewBook, findDuplicate, statusChange, statusFromCaption } from "./records";
+import {
+  arrangeShelves,
+  datesForNewBook,
+  findDuplicate,
+  FINISHED_SHOWN,
+  readingStrip,
+  shelfBooks,
+  statusChange,
+  statusFromCaption,
+  STRIP_MAX,
+} from "./records";
+import { CLOTH } from "./spine";
 import type { Book } from "./types";
 
 describe("statusFromCaption", () => {
@@ -97,5 +108,63 @@ describe("status changes", () => {
   it("changes nothing for the same status or no status", () => {
     expect(statusChange(book({}), "in_progress", "2026-10-12")).toBeNull();
     expect(statusChange(book({}), null, "2026-10-12")).toBeNull();
+  });
+});
+
+describe("shelves", () => {
+  const finished = (id: number, finishDate: string | null) => book({ id, status: "finished", finishDate });
+
+  it("puts the newest finish first, then undated books newest added first", () => {
+    const books = [finished(1, null), finished(2, "2026-09-01"), finished(3, null), finished(4, "2026-10-05"), book({ id: 5 })];
+    expect(shelfBooks(books, "finished").map((b) => b.id)).toEqual([4, 2, 3, 1]);
+  });
+
+  it("orders Reading now by start date and To read by date added", () => {
+    const books = [
+      book({ id: 1, startDate: "2026-09-01" }),
+      book({ id: 2, startDate: "2026-10-01" }),
+      book({ id: 3, status: "want_to_read", startDate: null, createdAt: "2026-10-02T00:00:00Z" }),
+      book({ id: 4, status: "want_to_read", startDate: null, createdAt: "2026-10-03T00:00:00Z" }),
+    ];
+    expect(shelfBooks(books, "in_progress").map((b) => b.id)).toEqual([2, 1]);
+    expect(shelfBooks(books, "want_to_read").map((b) => b.id)).toEqual([4, 3]);
+  });
+
+  it("has the three shelves in order, and only Finished is cut to the newest 12", () => {
+    const books = Array.from({ length: 20 }, (_, i) => finished(i + 1, `2026-01-${String(i + 1).padStart(2, "0")}`));
+    const shelves = arrangeShelves([...books, book({ id: 99 })]);
+    expect(shelves.map((s) => [s.title, s.books.length, s.shown])).toEqual([
+      ["Reading now", 1, null],
+      ["Finished", 20, FINISHED_SHOWN],
+      ["To read", 0, null],
+    ]);
+    expect(FINISHED_SHOWN).toBe(12);
+    expect(shelves[1].books.slice(0, FINISHED_SHOWN).map((b) => b.id)).toEqual(
+      Array.from({ length: 12 }, (_, i) => 20 - i),
+    );
+  });
+});
+
+describe("readingStrip", () => {
+  it("is the Reading now shelf, as spine colors and widths", () => {
+    const strip = readingStrip([
+      book({ id: 1, startDate: "2026-09-01", spineColor: "#16130c", pages: 351 }),
+      book({ id: 2, startDate: "2026-10-01", title: "You Gotta Ask", spineColor: null, pages: null }),
+      book({ id: 3, status: "finished" }),
+    ]);
+    expect(strip).toEqual([
+      { id: 2, title: "You Gotta Ask", color: expect.any(String), width: 30 },
+      { id: 1, title: "Knowing God", color: "#16130c", width: 40 },
+    ]);
+    expect(CLOTH).toContain(strip[0].color);
+  });
+
+  it(`shows at most ${STRIP_MAX} books`, () => {
+    const books = Array.from({ length: STRIP_MAX + 3 }, (_, i) => book({ id: i + 1 }));
+    expect(readingStrip(books)).toHaveLength(STRIP_MAX);
+  });
+
+  it("is empty when nothing is in progress", () => {
+    expect(readingStrip([book({ status: "finished" })])).toEqual([]);
   });
 });

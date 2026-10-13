@@ -14,7 +14,7 @@ Content lives in `src/app/page.tsx`. The Order Desk mark in `public/` comes from
 
 ## Bookshelf
 
-`/books` shows three shelves: Reading now, Finished, and To read. Each book is a spine colored from its cover; hovering (or tapping) pulls the cover forward. The page is regenerated at most once a minute, and right away after the intake writes a book.
+`/books` shows three shelves: Reading now, Finished, and To read, each newest first (by start date, finish date, and date added; undated books follow, most recently added first). Finished shows the newest 12, with a toggle for the rest. Each book is a spine colored from its cover, or a cloth color for a book with no cover; hovering, tapping, or pressing Enter on it pulls the cover forward. The page is regenerated at most once a minute, and right away after the intake writes a book. The homepage links to it from the site nav and from a strip of the Reading now spines; the homepage is only rendered at deploy, so the strip changes on the next deploy.
 
 **Data.** With `BOOKS_DATABASE_URL` set, the shelf reads the database. Without it (local builds, previews), it reads `src/data/books/shelf.json`, so a build needs no network or credentials. That file is the starting list: `src/data/books/seed.json` (the four photographed books and the old reading tracker) resolved against Open Library by `pnpm books:seed`, which also writes the covers to `public/books/covers/` and prints which books matched. The tracker had no reading dates, so seeded books have none.
 

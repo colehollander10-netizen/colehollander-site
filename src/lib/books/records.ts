@@ -1,4 +1,5 @@
 import { authorMatches, fold, mainTitle, normalizeTitle } from "./match";
+import { spineColor, spineWidth } from "./spine";
 import type { Book, BookSource, BookStatus } from "./types";
 
 // "finished", "started", "to read"… -> a status, or null when the caption
@@ -66,20 +67,38 @@ export const SHELF_TITLES: Record<BookStatus, string> = {
   want_to_read: "To read",
 };
 
-// Newest first by the date that matters for the shelf; undated books (the
-// seeded list) follow in the order they were added.
+// Most recently finished first; the rest are behind "Show all".
+export const FINISHED_SHOWN = 12;
+
+const shelfDate: Record<BookStatus, (b: Book) => string | null> = {
+  in_progress: (b) => b.startDate,
+  finished: (b) => b.finishDate,
+  want_to_read: (b) => b.createdAt,
+};
+
+// One shelf's books, newest first by the date that matters for it. Undated
+// books (the seeded list) follow, the most recently added first.
+export function shelfBooks(books: Book[], status: BookStatus): Book[] {
+  const date = shelfDate[status];
+  return books
+    .filter((b) => b.status === status)
+    .sort((a, b) => (date(b) ?? "").localeCompare(date(a) ?? "") || b.id - a.id);
+}
+
 export function arrangeShelves(books: Book[]) {
-  const newest = (a: string | null, b: string | null) => (b ?? "").localeCompare(a ?? "");
-  const shelf = (status: BookStatus, date: (b: Book) => string | null) => ({
+  return (["in_progress", "finished", "want_to_read"] as const).map((status) => ({
     status,
     title: SHELF_TITLES[status],
-    books: books
-      .filter((b) => b.status === status)
-      .sort((a, b) => newest(date(a), date(b)) || a.id - b.id),
-  });
-  return [
-    shelf("in_progress", (b) => b.startDate),
-    shelf("finished", (b) => b.finishDate),
-    shelf("want_to_read", (b) => b.createdAt),
-  ];
+    books: shelfBooks(books, status),
+    shown: status === "finished" ? FINISHED_SHOWN : null,
+  }));
+}
+
+// The spines in the homepage's "Reading now" strip.
+export const STRIP_MAX = 6;
+
+export function readingStrip(books: Book[]) {
+  return shelfBooks(books, "in_progress")
+    .slice(0, STRIP_MAX)
+    .map((b) => ({ id: b.id, title: b.title, color: spineColor(b), width: spineWidth(b.pages) }));
 }

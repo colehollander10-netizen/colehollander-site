@@ -2,33 +2,39 @@
 
 import Image from "next/image";
 import { motion, MotionConfig } from "motion/react";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 
-import { inkFor } from "@/lib/books/color";
+import { lastNames, spineColor, spineInk, spineWidth } from "@/lib/books/spine";
 import type { Book } from "@/lib/books/types";
+import { textLink } from "@/lib/styles";
 
 const SPINE_H = 176;
 const COVER_W = 140;
 const COVER_H = 210;
 
-// About 400ms with a little overshoot, so the book feels pulled, not slid.
-const spring = { type: "spring", duration: 0.4, bounce: 0.18 } as const;
+// Settles in about 380ms with a little overshoot, so the book feels pulled,
+// not slid. Opacity eases on its own, so a closing cover never lingers half
+// visible while the spring settles. The caption follows the cover a beat later.
+const spring = {
+  type: "spring",
+  visualDuration: 0.38,
+  bounce: 0.16,
+  opacity: { duration: 0.18, ease: "easeOut" },
+} as const;
+const captionIn = { type: "spring", visualDuration: 0.32, bounce: 0.1, delay: 0.08 } as const;
+const captionOut = { duration: 0.12, ease: "easeOut" } as const;
 
-// Cloth colors for books whose catalog has no cover.
-const CLOTH = ["#6f4e37", "#4f5d4a", "#3f4f63", "#7a5c3e", "#5e4655", "#425a5a"];
+// A book opens once the mouse rests on it for a moment, so sweeping across
+// the shelf doesn't fan every cover out.
+const HOVER_DELAY = 70;
 
-// Thicker books get wider spines, within a range that keeps the shelf even.
-function spineWidth(pages: number | null): number {
-  return pages ? Math.round(Math.min(44, Math.max(22, 18 + pages / 16))) : 30;
-}
-
-function spineColor(book: Book): string {
-  if (book.spineColor) return book.spineColor;
-  const hash = [...book.title].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
-  return CLOTH[hash % CLOTH.length];
-}
-
-const lastNames = (authors: string[]) => authors.map((a) => a.split(" ").at(-1)).join(" & ");
+// A rounded spine: shadow at the hinge, a soft highlight, shadow at the edge.
+const SPINE_SHADE =
+  "linear-gradient(90deg, rgb(0 0 0/0.22), rgb(255 255 255/0.1) 20%, rgb(255 255 255/0) 50%, rgb(0 0 0/0.12))";
+const HINGE = "linear-gradient(90deg, rgb(0 0 0/0.28), rgb(255 255 255/0.12) 5%, rgb(0 0 0/0) 9%)";
+// The weave of a cloth binding, for books with no cover.
+const WEAVE =
+  "repeating-linear-gradient(0deg, rgb(255 255 255/0.04) 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, rgb(0 0 0/0.06) 0 1px, transparent 1px 3px)";
 
 function formatDate(day: string): string {
   return new Date(`${day}T00:00:00Z`).toLocaleDateString("en-US", {
@@ -46,10 +52,15 @@ function dateLine(book: Book): string | null {
 }
 
 // Hovering a spine (or tapping it, or Enter on it) pulls the book off the
-// shelf: the spine swings away and the cover turns to face the visitor.
-export function Bookshelf({ books, label }: { books: Book[]; label: string }) {
+// shelf: the spine swings away and the cover turns to face the visitor. With
+// `shown`, only that many books are on the shelf until "Show all".
+export function Bookshelf({ books, label, shown }: { books: Book[]; label: string; shown: number | null }) {
   const [active, setActive] = useState<number | null>(null);
+  const [all, setAll] = useState(false);
   const shelf = useRef<HTMLUListElement>(null);
+  const listId = useId();
+  const collapsible = shown !== null && books.length > shown;
+  const visible = collapsible && !all ? books.slice(0, shown) : books;
 
   // A tap elsewhere or Escape puts the book back.
   useEffect(() => {
@@ -70,12 +81,13 @@ export function Bookshelf({ books, label }: { books: Book[]; label: string }) {
     <MotionConfig reducedMotion="user">
       <ul
         ref={shelf}
+        id={listId}
         aria-label={label}
         // Clipped sideways so closed covers past the edge never widen the page.
         className="bookshelf flex flex-wrap items-end gap-x-[3px] overflow-x-clip px-2"
         style={{ "--spine-h": `${SPINE_H}px` } as CSSProperties}
       >
-        {books.map((book) => (
+        {visible.map((book) => (
           <Spine
             key={book.id}
             book={book}
@@ -84,6 +96,17 @@ export function Bookshelf({ books, label }: { books: Book[]; label: string }) {
           />
         ))}
       </ul>
+      {collapsible && (
+        <button
+          type="button"
+          aria-expanded={all}
+          aria-controls={listId}
+          onClick={() => setAll(!all)}
+          className={`${textLink} mt-5 ml-2 cursor-pointer text-muted-foreground`}
+        >
+          {all ? "Show fewer" : `Show all ${books.length}`}
+        </button>
+      )}
     </MotionConfig>
   );
 }
@@ -91,21 +114,29 @@ export function Bookshelf({ books, label }: { books: Book[]; label: string }) {
 function Spine({ book, active, setActive }: { book: Book; active: boolean; setActive: (on: boolean) => void }) {
   const item = useRef<HTMLLIElement>(null);
   const pointer = useRef("");
+  const hover = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [left, setLeft] = useState(0);
+  // Whether the cover is still animating, so a closing one stays above the
+  // neighboring spines until it is gone.
+  const [moving, setMoving] = useState(false);
   const width = spineWidth(book.pages);
   const color = spineColor(book);
-  const ink = inkFor(color) === "dark" ? "#1f1a16" : "#fbf8f2";
+  const ink = spineInk(color);
   const cover = book.coverCachedPath ?? book.coverUrl;
   const dates = dateLine(book);
   const authors = book.authors.join(", ");
 
-  // Center the cover on the spine, kept inside the shelf.
+  useEffect(() => () => clearTimeout(hover.current), []);
+
+  // Center the cover on the spine, kept inside the shelf's padding so its
+  // focus ring isn't clipped.
   const open = () => {
     const li = item.current;
-    if (li?.parentElement) {
-      const x = li.offsetLeft;
-      const room = li.parentElement.clientWidth;
-      setLeft(Math.min(Math.max((width - COVER_W) / 2, -x), room - x - COVER_W));
+    const ul = li?.parentElement;
+    if (li && ul) {
+      const x = li.getBoundingClientRect().left - ul.getBoundingClientRect().left;
+      const inset = parseFloat(getComputedStyle(ul).paddingLeft);
+      setLeft(Math.min(Math.max((width - COVER_W) / 2, inset - x), ul.clientWidth - inset - x - COVER_W));
     }
     setActive(true);
   };
@@ -124,10 +155,16 @@ function Spine({ book, active, setActive }: { book: Book; active: boolean; setAc
     // pointer.
     <li
       ref={item}
-      className={`relative shrink-0 ${active ? "z-20" : ""}`}
-      style={{ width, height: SPINE_H, perspective: 900 }}
-      onPointerEnter={(e) => e.pointerType === "mouse" && open()}
-      onPointerLeave={(e) => e.pointerType === "mouse" && setActive(false)}
+      className="group/book relative shrink-0"
+      style={{ width, height: SPINE_H, perspective: 900, zIndex: active ? 30 : moving ? 20 : undefined }}
+      onPointerEnter={(e) => {
+        if (e.pointerType === "mouse") hover.current = setTimeout(open, HOVER_DELAY);
+      }}
+      onPointerLeave={(e) => {
+        if (e.pointerType !== "mouse") return;
+        clearTimeout(hover.current);
+        setActive(false);
+      }}
     >
       <motion.button
         type="button"
@@ -143,47 +180,71 @@ function Spine({ book, active, setActive }: { book: Book; active: boolean; setAc
         }}
         onBlur={() => setActive(false)}
         initial={false}
-        animate={active ? { rotateY: -70, opacity: 0.35 } : { rotateY: 0, opacity: 1 }}
+        // Swinging away from the visitor, so perspective shrinks the spine
+        // behind the cover instead of growing it past the cover's edges.
+        animate={active ? { rotateY: 70, opacity: 0.35 } : { rotateY: 0, opacity: 1 }}
         transition={spring}
-        className="spine absolute inset-0 flex cursor-pointer flex-col items-center justify-between overflow-hidden rounded-[3px] py-3 shadow-[inset_0_0_0_1px_rgb(0_0_0/0.12)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
-        style={{ backgroundColor: color, color: ink, transformOrigin: "left center" }}
+        // While open, the focus ring moves to the cover.
+        className={`absolute inset-0 flex cursor-pointer flex-col items-center justify-between gap-2 overflow-hidden rounded-[2px] py-3.5 ring-1 ring-foreground/15 ring-inset ${active ? "focus-visible:outline-none" : "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"}`}
+        style={{
+          backgroundColor: color,
+          backgroundImage: cover ? SPINE_SHADE : `${SPINE_SHADE}, ${WEAVE}`,
+          color: ink,
+          transformOrigin: "left center",
+        }}
       >
-        <span className="max-h-[118px] truncate text-[11px] leading-none font-medium tracking-tight [writing-mode:vertical-rl]">
+        {!cover && (
+          // Gilt rules at the head and foot of a cloth binding.
+          <>
+            <span aria-hidden className="absolute inset-x-[3px] top-[5px] h-[4px] border-y border-current opacity-40" />
+            <span aria-hidden className="absolute inset-x-[3px] bottom-[5px] h-[4px] border-y border-current opacity-40" />
+          </>
+        )}
+        {/* The title takes the room the authors leave. */}
+        <span className="min-h-0 truncate text-[11px] leading-none font-medium tracking-[-0.01em] [writing-mode:vertical-rl]">
           {book.title}
         </span>
         {book.authors.length > 0 && (
-          <span className="max-h-[36px] truncate text-[9px] leading-none opacity-75 [writing-mode:vertical-rl]">
+          <span className="max-h-[64px] shrink-0 truncate text-[8.5px] leading-none tracking-[0.06em] uppercase opacity-70 [writing-mode:vertical-rl]">
             {lastNames(book.authors)}
           </span>
         )}
       </motion.button>
 
-      <motion.div
+      <div
         aria-hidden
-        initial={false}
-        animate={
-          active
-            ? { opacity: 1, rotateY: 0, scale: 1, y: 0 }
-            : { opacity: 0, rotateY: 55, scale: 0.72, y: 14 }
-        }
-        transition={spring}
         className="pointer-events-none absolute"
-        style={{ left, top: SPINE_H - COVER_H, width: COVER_W, transformPerspective: 900, originX: 0.5, originY: 1 }}
+        style={{ left, top: SPINE_H - COVER_H, width: COVER_W }}
       >
-        <div
-          className="relative overflow-hidden rounded-[3px] shadow-[0_18px_40px_-12px_rgb(0_0_0/0.45),0_4px_12px_-4px_rgb(0_0_0/0.3)]"
-          style={{ width: COVER_W, height: COVER_H, backgroundColor: color }}
+        <motion.div
+          initial={false}
+          animate={
+            active
+              ? { opacity: 1, rotateY: 0, scale: 1, y: 0 }
+              : { opacity: 0, rotateY: 40, scale: 0.78, y: 12 }
+          }
+          transition={spring}
+          onAnimationStart={() => setMoving(true)}
+          onAnimationComplete={() => setMoving(false)}
+          className="relative overflow-hidden rounded-[3px] shadow-[0_18px_40px_-12px_rgb(0_0_0/0.45),0_4px_12px_-4px_rgb(0_0_0/0.3)] group-has-focus-visible/book:outline-2 group-has-focus-visible/book:outline-offset-2 group-has-focus-visible/book:outline-foreground"
+          style={{ width: COVER_W, height: COVER_H, backgroundColor: color, transformPerspective: 900, originY: 1 }}
         >
           {cover ? (
             <Image src={cover} alt="" width={COVER_W} height={COVER_H} loading="lazy" className="size-full object-cover" />
           ) : (
-            <div className="flex size-full flex-col justify-between p-4" style={{ color: ink }}>
-              <span className="text-base leading-tight font-medium">{book.title}</span>
-              <span className="text-xs opacity-75">{authors}</span>
-            </div>
+            <ClothCover book={book} ink={ink} />
           )}
-        </div>
-        <div className="mt-2 rounded-md bg-popover/95 px-2.5 py-2 text-xs leading-snug shadow-sm ring-1 ring-foreground/10">
+          <span className="absolute inset-0" style={{ backgroundImage: HINGE }} />
+        </motion.div>
+        <motion.div
+          initial={false}
+          animate={
+            active
+              ? { opacity: 1, y: 0, transition: captionIn }
+              : { opacity: 0, y: -4, transition: captionOut }
+          }
+          className="mt-2.5 rounded-md bg-popover/95 px-2.5 py-2 text-xs leading-snug shadow-sm ring-1 ring-foreground/10"
+        >
           <p className="font-medium text-popover-foreground">{book.title}</p>
           {authors && <p className="text-muted-foreground">{authors}</p>}
           {(dates || book.rating) && (
@@ -197,8 +258,23 @@ function Spine({ book, active, setActive }: { book: Book; active: boolean; setAc
               )}
             </p>
           )}
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </li>
+  );
+}
+
+// A typeset front for a book whose catalog has no cover: the spine's cloth,
+// a blind-stamped frame, the title, a rule, and the authors at the foot.
+function ClothCover({ book, ink }: { book: Book; ink: string }) {
+  return (
+    <div className="relative flex size-full flex-col px-5 pt-7 pb-6" style={{ color: ink, backgroundImage: WEAVE }}>
+      <span className="absolute inset-[9px] rounded-[1px] border border-current opacity-30" />
+      <span className="text-[17px] leading-[1.12] font-light tracking-[-0.02em] text-balance">{book.title}</span>
+      <span className="mt-3.5 h-px w-6 bg-current opacity-50" />
+      <span className="mt-auto text-[8.5px] leading-snug tracking-[0.14em] uppercase opacity-75">
+        {book.authors.join(" & ")}
+      </span>
+    </div>
   );
 }
