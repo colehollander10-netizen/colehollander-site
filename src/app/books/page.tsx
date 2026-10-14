@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { Bookshelf } from "@/components/bookshelf";
+import { Library } from "@/components/bookshelf";
 import { SiteNav } from "@/components/site-nav";
 import { arrangeShelves } from "@/lib/books/records";
 import { loadBooks } from "@/lib/books/store";
@@ -27,23 +27,7 @@ export default async function BooksPage() {
         </h1>
       </header>
 
-      {shelves.map((shelf, i) => (
-        <section
-          key={shelf.status}
-          aria-labelledby={`shelf-${shelf.status}`}
-          className={`${reveal} mt-16`}
-          style={{ animationDelay: `${150 * (i + 1)}ms` }}
-        >
-          <h2 id={`shelf-${shelf.status}`} className="mb-12 text-muted-foreground">
-            {shelf.title} <span className="ml-0.5 tabular-nums text-foreground/30">{shelf.books.length}</span>
-          </h2>
-          {shelf.books.length ? (
-            <Bookshelf books={shelf.books} label={shelf.title} shown={shelf.shown} />
-          ) : (
-            <p className="text-muted-foreground">Nothing here right now.</p>
-          )}
-        </section>
-      ))}
+      <Library shelves={shelves} />
     </main>
   );
 }
