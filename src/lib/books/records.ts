@@ -1,5 +1,6 @@
 import { authorMatches, fold, mainTitle, normalizeTitle } from "./match";
-import { spineColor, spineWidth } from "./spine";
+import { colorOrder } from "./color";
+import { lastName, spineColor, spineWidth } from "./spine";
 import type { Book, BookSource, BookStatus } from "./types";
 
 // "finished", "started", "to read"… -> a status, or null when the caption
@@ -92,6 +93,30 @@ export function arrangeShelves(books: Book[]) {
     books: shelfBooks(books, status),
     shown: status === "finished" ? FINISHED_SHOWN : null,
   }));
+}
+
+export type Shelf = ReturnType<typeof arrangeShelves>[number];
+
+export const ARRANGEMENTS = [
+  ["recent", "Recent"],
+  ["color", "Color"],
+  ["length", "Length"],
+  ["author", "Author"],
+] as const;
+export type Arrangement = (typeof ARRANGEMENTS)[number][0];
+
+// A shelf's books in the order the visitor picked. "recent" is the shelf's
+// own order; books with no page count go to the end of "length".
+export function arrange(books: Book[], by: Arrangement): Book[] {
+  const author = (b: Book) => lastName(b.authors[0] ?? "") ?? "";
+  const order: Record<Arrangement, ((a: Book, b: Book) => number) | null> = {
+    recent: null,
+    color: (a, b) => colorOrder(spineColor(a)) - colorOrder(spineColor(b)),
+    length: (a, b) => (a.pages ?? 1e9) - (b.pages ?? 1e9),
+    author: (a, b) => author(a).localeCompare(author(b)) || a.title.localeCompare(b.title),
+  };
+  const compare = order[by];
+  return compare ? books.toSorted(compare) : books;
 }
 
 // The spines in the homepage's "Reading now" strip.

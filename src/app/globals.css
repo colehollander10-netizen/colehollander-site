@@ -148,6 +148,13 @@
   background-size: 100% calc(var(--spine-h) + var(--row-gap));
 }
 
+/* The plant at the end of the last shelf. */
+@keyframes sway {
+  50% {
+    transform: rotate(-2.5deg);
+  }
+}
+
 /* Otto's hello, from the Order Desk link. */
 @keyframes otto-wave {
   50% {

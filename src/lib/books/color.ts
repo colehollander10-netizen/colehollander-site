@@ -30,3 +30,14 @@ export function inkFor(hex: string): "light" | "dark" {
   });
   return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.4 ? "dark" : "light";
 }
+
+// A color's place on a shelf sorted by color: around the wheel from red, then
+// the grays, browns near black, and whites, light to dark.
+export function colorOrder(hex: string): number {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  const max = Math.max(r, g, b);
+  const c = max - Math.min(r, g, b);
+  if (c < 0.12) return 360 + (1 - max);
+  const h = max === r ? (g - b) / c : max === g ? (b - r) / c + 2 : (r - g) / c + 4;
+  return (h * 60 + 360) % 360;
+}
