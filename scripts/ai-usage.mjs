@@ -3,7 +3,8 @@
 //
 // - Codex and Claude Code: this machine's session logs -> <machine>.json.
 //   Each computer writes its own file, so two machines never overwrite
-//   each other's numbers.
+//   each other's numbers. The file keeps a row per day, tool and model, so
+//   days whose logs have since been deleted keep their numbers.
 // - Cursor: usage lives on Cursor's servers, so it comes from the dashboard's
 //   CSV export (Usage -> Export) in ~/Downloads -> cursor.json. It is
 //   account-wide, so there is one file no matter which computer imports it.
@@ -26,6 +27,7 @@ import { createHash } from "node:crypto";
 import { homedir, hostname } from "node:os";
 import { join } from "node:path";
 import { createInterface } from "node:readline";
+import { createZstdDecompress } from "node:zlib";
 
 const home = homedir();
 
@@ -50,8 +52,11 @@ function* walk(dir, match) {
   }
 }
 
+// Codex compresses older session logs (.jsonl.zst); they are read as they stream.
 async function* records(path, needles) {
-  for await (const line of createInterface({ input: createReadStream(path) })) {
+  const file = createReadStream(path);
+  const input = path.endsWith(".zst") ? file.pipe(createZstdDecompress()) : file;
+  for await (const line of createInterface({ input })) {
     if (!needles.some((n) => line.includes(n))) continue;
     try {
       yield JSON.parse(line);
@@ -180,19 +185,16 @@ if (process.argv.includes("--if-stale") && existsSync(snapshot)) {
   }
 }
 
-const days = new Map();
-const models = new Map();
+// One row per day, tool and model.
+const found = new Map();
 
 function add(tool, model, iso, tokens) {
   const date = localDay(iso);
   if (!date || !(tokens > 0)) return;
-  const day = days.get(date) ?? { date, codex: 0, claude: 0 };
-  day[tool] += tokens;
-  days.set(date, day);
-  const key = `${tool}:${model || "unknown"}`;
-  const row = models.get(key) ?? { model: model || "unknown", tool, tokens: 0 };
+  const key = `${date}|${tool}|${model || "unknown"}`;
+  const row = found.get(key) ?? { date, tool, model: model || "unknown", tokens: 0 };
   row.tokens += tokens;
-  models.set(key, row);
+  found.set(key, row);
 }
 
 // Codex: each token_count event carries the tokens of the turn that just ran;
@@ -200,9 +202,10 @@ function add(tool, model, iso, tokens) {
 const codexSeen = new Set();
 for (const root of ["sessions", "archived_sessions"]) {
   const dir = join(home, ".codex", root);
-  const isRollout = (n) => n.startsWith("rollout-") && n.endsWith(".jsonl");
+  const isRollout = (n) => n.startsWith("rollout-") && /\.jsonl(\.zst)?$/.test(n);
   for (const path of walk(dir, isRollout)) {
-    const name = path.split("/").pop();
+    // A session counts once, compressed or not.
+    const name = path.split("/").pop().replace(/\.zst$/, "");
     if (codexSeen.has(name)) continue;
     codexSeen.add(name);
     let model = null;
@@ -236,15 +239,43 @@ for (const path of walk(projects, (n) => n.endsWith(".jsonl"))) {
   }
 }
 
-const out = {
-  generatedAt: localDay(new Date().toISOString()),
-  days: [...days.values()].sort((a, b) => a.date.localeCompare(b.date)),
-  models: [...models.values()].sort((a, b) => b.tokens - a.tokens),
-};
-if (out.days.length === 0) {
+if (found.size === 0) {
   console.log("ai-usage: no Codex or Claude Code logs on this machine; nothing written");
   process.exit(0);
 }
+
+// Claude Code deletes transcripts after 30 days, and Codex may too, so the
+// logs can hold less of a day than the last snapshot did. For each day and
+// tool, keep whichever has more: the logs or the last snapshot's rows.
+const fresh = [...found.values()];
+const previous = existsSync(snapshot) ? JSON.parse(readFileSync(snapshot, "utf8")).rows : [];
+const perDay = (rows) => {
+  const totals = new Map();
+  for (const r of rows) totals.set(`${r.date}|${r.tool}`, (totals.get(`${r.date}|${r.tool}`) ?? 0) + r.tokens);
+  return totals;
+};
+const [freshDays, previousDays] = [perDay(fresh), perDay(previous)];
+const pruned = (r) => (freshDays.get(`${r.date}|${r.tool}`) ?? 0) < (previousDays.get(`${r.date}|${r.tool}`) ?? 0);
+const rows = [...fresh.filter((r) => !pruned(r)), ...previous.filter(pruned)].sort(
+  (a, b) => a.date.localeCompare(b.date) || a.tool.localeCompare(b.tool) || b.tokens - a.tokens,
+);
+
+const days = new Map();
+const models = new Map();
+for (const r of rows) {
+  const day = days.get(r.date) ?? { date: r.date, codex: 0, claude: 0 };
+  day[r.tool] += r.tokens;
+  days.set(r.date, day);
+  const model = models.get(`${r.tool}:${r.model}`) ?? { model: r.model, tool: r.tool, tokens: 0 };
+  model.tokens += r.tokens;
+  models.set(`${r.tool}:${r.model}`, model);
+}
+const out = {
+  generatedAt: localDay(new Date().toISOString()),
+  days: [...days.values()],
+  models: [...models.values()].sort((a, b) => b.tokens - a.tokens),
+  rows,
+};
 
 mkdirSync(dataDir, { recursive: true });
 writeFileSync(
