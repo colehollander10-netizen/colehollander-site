@@ -1,6 +1,6 @@
 # colehollander.com
 
-The source for [colehollander.com](https://colehollander.com). Next.js on Vercel, Tailwind, shadcn/ui, Geist. Pages are prerendered; the bookshelf intake is the one server route.
+The source for [colehollander.com](https://colehollander.com). Next.js on Vercel, Tailwind, shadcn/ui, Geist. Pages are prerendered; the bookshelf intake is the one server route. Deploys use Node.js 24.x (`engines.node` in `package.json`).
 
 ```bash
 pnpm install
